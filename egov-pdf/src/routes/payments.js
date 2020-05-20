@@ -19,10 +19,11 @@ router.post(
     var consumerCode = req.query.consumerCode;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !consumerCode) {
       return renderError(
+        res,
         "tenantId and consumerCode are mandatory to generate the receipt"
       );
     }

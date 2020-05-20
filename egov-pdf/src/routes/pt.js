@@ -24,10 +24,11 @@ router.post(
     var uuid = req.query.uuid;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !uuid) {
       return renderError(
+        res,
         "tenantId and uuid are mandatory to generate the pass"
       );
     }
@@ -86,10 +87,11 @@ router.post(
     var uuid = req.query.uuid;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !uuid) {
       return renderError(
+        res,
         "tenantId and uuid are mandatory to generate the pass"
       );
     }
@@ -161,14 +163,14 @@ router.post(
     var uuid = req.query.uuid;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !uuid) {
       return renderError(
+        res,
         "tenantId and uuid are mandatory to generate the pass"
       );
     }
-
     try {
       try {
         resProperty = await search_property(uuid, tenantId, requestinfo);

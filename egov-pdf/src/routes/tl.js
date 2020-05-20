@@ -23,14 +23,14 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
+        res,
         "tenantId and applicationNumber are mandatory to generate the tlreceipt"
       );
     }
-
     try {
       try {
         restradelicense = await search_tllicense(
@@ -110,10 +110,11 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
+        res,
         "tenantId and applicationNumber are mandatory to generate the tlreceipt"
       );
     }
@@ -176,10 +177,11 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
+        res,
         "tenantId and applicationNumber are mandatory to generate the tlreceipt"
       );
     }
@@ -242,10 +244,11 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError("requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null");
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
+        res,
         "tenantId and applicationNumber are mandatory to generate the tlreceipt"
       );
     }
