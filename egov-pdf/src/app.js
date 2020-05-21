@@ -8,7 +8,7 @@ var epassRouter = require("./routes/epass");
 var tlRouter = require("./routes/tl");
 var ptRouter = require("./routes/pt");
 var paymentRouter = require("./routes/payments");
-var billRouter = require("./routes/bills");
+// var billRouter = require("./routes/bills");
 
 var app = express();
 
@@ -26,7 +26,7 @@ app.use(config.app.contextPath + "/download/epass", epassRouter);
 app.use(config.app.contextPath + "/download/TL", tlRouter);
 app.use(config.app.contextPath + "/download/PT", ptRouter);
 app.use(config.app.contextPath + "/download/PAYMENT", paymentRouter);
-app.use(config.app.contextPath + "/download/BILL", billRouter);
+// app.use(config.app.contextPath + "/download/BILL", billRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

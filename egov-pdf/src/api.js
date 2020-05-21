@@ -29,26 +29,38 @@ async function search_epass(uuid, tenantId, requestinfo) {
 }
 
 async function search_property(uuid, tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    uuids: uuid,
+  };
+  if (checkIfCitizen(requestinfo)) {
+    var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
+    var userName = requestinfo.RequestInfo.userInfo.userName;
+    params["mobileNumber"] = mobileNumber || userName;
+  }
   return await axios({
     method: "post",
     url: url.resolve(config.host.pt, config.paths.pt_search),
     data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      uuids: uuid,
-    },
+    params
   });
 }
 
 async function search_payment(consumerCodes, tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    consumerCodes: consumerCodes,
+  };
+  if (checkIfCitizen(requestinfo)) {
+    var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
+    var userName = requestinfo.RequestInfo.userInfo.userName;
+    params["mobileNumber"] = mobileNumber || userName;
+  }
   return await axios({
     method: "post",
     url: url.resolve(config.host.payments, config.paths.payment_search),
     data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      consumerCodes: consumerCodes,
-    },
+    params
   });
 }
 
@@ -65,14 +77,20 @@ async function search_bill(consumerCode, tenantId, requestinfo) {
 }
 
 async function search_tllicense(applicationNumber, tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    applicationNumber: applicationNumber,
+  };
+  if (checkIfCitizen(requestinfo)) {
+    var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
+    var userName = requestinfo.RequestInfo.userInfo.userName;
+    params["mobileNumber"] = mobileNumber || userName;
+  }
   return await axios({
     method: "post",
     url: url.resolve(config.host.tl, config.paths.tl_search),
     data: requestinfo,
-    params: {
-      tenantId: tenantId,
-      applicationNumber: applicationNumber,
-    },
+    params
   });
 }
 
@@ -99,6 +117,14 @@ async function create_pdf(tenantId, key, data, requestinfo) {
       key: key,
     },
   });
+}
+
+function checkIfCitizen(requestinfo) {
+  if (requestinfo.RequestInfo.userInfo.type == "CITIZEN") {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 module.exports = {
