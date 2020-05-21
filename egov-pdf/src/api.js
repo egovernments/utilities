@@ -65,8 +65,6 @@ async function search_bill(consumerCode, tenantId, requestinfo) {
 }
 
 async function search_tllicense(applicationNumber, tenantId, requestinfo) {
-  console.log("requestinfo",JSON.stringify(requestinfo));
-  console.log("url",url.resolve(config.host.tl, config.paths.tl_search));
   return await axios({
     method: "post",
     url: url.resolve(config.host.tl, config.paths.tl_search),

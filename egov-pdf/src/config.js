@@ -39,7 +39,7 @@ module.exports = {
     pdf: process.env.EGOV_PDF_HOST || HOST,
     user: process.env.EGOV_USER_HOST || HOST,
     payments: process.env.EGOV_PAYMENTS_HOST || HOST,
-    bill: process.env.EGOV_BILL_HOST || HOST,
+    bill: process.env.EGOV_SEARCHER_HOST || HOST,
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
