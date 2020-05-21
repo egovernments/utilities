@@ -72,7 +72,7 @@ router.post(
         });
         pdfResponse.data.pipe(res);
       } else {
-        return renderError(res, "There is no property for this id");
+        return renderError(res, "There is no property for you for this id");
       }
     } catch (ex) {
       console.log(ex.stack);
@@ -148,7 +148,7 @@ router.post(
           return renderError(res, "There is no bill for this id");
         }
       } else {
-        return renderError(res, "There is no property for this id");
+        return renderError(res, "There is no property for you for this id");
       }
     } catch (ex) {
       console.log(ex.stack);
@@ -227,7 +227,7 @@ router.post(
           return renderError(res, "There is no payment for this id");
         }
       } else {
-        return renderError(res, "There is no property for this id");
+        return renderError(res, "There is no property for you for this id");
       }
     } catch (ex) {
       console.log(ex.stack);

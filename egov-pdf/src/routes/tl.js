@@ -94,7 +94,7 @@ router.post(
       } else {
         return renderError(
           res,
-          "There is no tradelicense for this applicationNumber"
+          "There is no tradelicense for you for this applicationNumber"
         );
       }
     } catch (ex) {
@@ -161,7 +161,7 @@ router.post(
       } else {
         return renderError(
           res,
-          "There is no tradelicense for this applicationNumber"
+          "There is no tradelicense for you for this applicationNumber"
         );
       }
     } catch (ex) {
@@ -228,7 +228,7 @@ router.post(
       } else {
         return renderError(
           res,
-          "There is no tradelicense for this applicationNumber"
+          "There is no tradelicense for you for this applicationNumber"
         );
       }
     } catch (ex) {
