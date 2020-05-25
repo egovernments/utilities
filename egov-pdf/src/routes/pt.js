@@ -13,7 +13,8 @@ var {
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 
-function renderError(res, errorMessage) {
+function renderError(res, errorMessage, errorCode) {
+  if (errorCode) res.status(errorCode);
   res.render("error-message", { message: errorMessage });
 }
 
@@ -25,12 +26,12 @@ router.post(
     var uuid = req.query.uuid;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null",400);
     }
     if (!tenantId || !uuid) {
       return renderError(
         res,
-        "tenantId and uuid are mandatory to generate the pass"
+        "tenantId and uuid are mandatory to generate the pass",400
       );
     }
 
@@ -40,7 +41,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of the property");
+        return renderError(res, "Failed to query details of the property",500);
       }
       var properties = resProperty.data;
 
@@ -53,7 +54,7 @@ router.post(
         if (creationReason != "MUTATION")
           return renderError(
             res,
-            "ptmutation certificate allowed only on mutation applications"
+            "ptmutation certificate allowed only on mutation applications",400
           );
         try {
           var applicationNumber = properties.Properties[0].acknowldgementNumber;
@@ -66,14 +67,14 @@ router.post(
           if (status != "APPROVED")
             return renderError(
               res,
-              `ptmutation certificate allowed only on Approved status, but current application status is ${status}`
+              `ptmutation certificate allowed only on Approved status, but current application status is ${status}`,400
             );
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
           return renderError(
             res,
-            "Failed to get status for property from workflow"
+            "Failed to get status for property from workflow",500
           );
         }
         var pdfResponse;
@@ -88,7 +89,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, "Failed to generate PDF for property");
+          return renderError(res, "Failed to generate PDF for property",500);
         }
 
         var filename = `${pdfkey}_${new Date().getTime()}`;
@@ -100,7 +101,7 @@ router.post(
         });
         pdfResponse.data.pipe(res);
       } else {
-        return renderError(res, "There is no property for you for this id");
+        return renderError(res, "There is no property for you for this id",404);
       }
     } catch (ex) {
       console.log(ex.stack);
@@ -115,12 +116,12 @@ router.post(
     var uuid = req.query.uuid;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null",400);
     }
     if (!tenantId || !uuid) {
       return renderError(
         res,
-        "tenantId and uuid are mandatory to generate the pass"
+        "tenantId and uuid are mandatory to generate the pass",400
       );
     }
     try {
@@ -129,7 +130,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of the property");
+        return renderError(res, "Failed to query details of the property",500);
       }
       var properties = resProperty.data;
       if (
@@ -144,7 +145,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, `Failed to query bills for property`);
+          return renderError(res, `Failed to query bills for property`,500);
         }
         var bills = billresponse.data;
         if (bills && bills.Bills && bills.Bills.length > 0) {
@@ -161,7 +162,7 @@ router.post(
           } catch (ex) {
             console.log(ex.stack);
             if (ex.response && ex.response.data) console.log(ex.response.data);
-            return renderError(res, "Failed to generate PDF for property");
+            return renderError(res, "Failed to generate PDF for property",500);
           }
 
           var filename = `${pdfkey}_${new Date().getTime()}`;
@@ -173,10 +174,10 @@ router.post(
           });
           pdfResponse.data.pipe(res);
         } else {
-          return renderError(res, "There is no bill for this id");
+          return renderError(res, "There is no bill for this id",404);
         }
       } else {
-        return renderError(res, "There is no property for you for this id");
+        return renderError(res, "There is no property for you for this id",404);
       }
     } catch (ex) {
       console.log(ex.stack);
@@ -191,12 +192,12 @@ router.post(
     var uuid = req.query.uuid;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null",400);
     }
     if (!tenantId || !uuid) {
       return renderError(
         res,
-        "tenantId and uuid are mandatory to generate the pass"
+        "tenantId and uuid are mandatory to generate the pass",400
       );
     }
     try {
@@ -205,7 +206,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of the property");
+        return renderError(res, "Failed to query details of the property",500);
       }
       var properties = resProperty.data;
       if (
@@ -224,7 +225,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, `Failed to query payment for property`);
+          return renderError(res, `Failed to query payment for property`,500);
         }
         var payments = paymentresponse.data;
         if (payments && payments.Payments && payments.Payments.length > 0) {
@@ -240,7 +241,7 @@ router.post(
           } catch (ex) {
             console.log(ex.stack);
             if (ex.response && ex.response.data) console.log(ex.response.data);
-            return renderError(res, "Failed to generate PDF for property");
+            return renderError(res, "Failed to generate PDF for property",500);
           }
 
           var filename = `${pdfkey}_${new Date().getTime()}`;
@@ -252,10 +253,10 @@ router.post(
           });
           pdfResponse.data.pipe(res);
         } else {
-          return renderError(res, "There is no payment for this id");
+          return renderError(res, "There is no payment for this id",404);
         }
       } else {
-        return renderError(res, "There is no property for you for this id");
+        return renderError(res, "There is no property for you for this id",404);
       }
     } catch (ex) {
       console.log(ex.stack);

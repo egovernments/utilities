@@ -12,7 +12,8 @@ var {
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 
-function renderError(res, errorMessage) {
+function renderError(res, errorMessage, errorCode) {
+  if (errorCode) res.status(errorCode);
   res.render("error-message", { message: errorMessage });
 }
 
@@ -23,12 +24,12 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null",400);
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
         res,
-        "tenantId and applicationNumber are mandatory to generate the tlreceipt"
+        "tenantId and applicationNumber are mandatory to generate the tlreceipt",400
       );
     }
     try {
@@ -41,7 +42,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of tradelicense");
+        return renderError(res, "Failed to query details of tradelicense",500);
       }
       var tradelicenses = restradelicense.data;
 
@@ -61,7 +62,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, `Failed to query payment for tradelicense`);
+          return renderError(res, `Failed to query payment for tradelicense`,500);
         }
         var payments = paymentresponse.data;
         if (payments && payments.Payments && payments.Payments.length > 0) {
@@ -79,7 +80,7 @@ router.post(
             if (ex.response && ex.response.data) console.log(ex.response.data);
             return renderError(
               res,
-              "Failed to generate PDF for tradelicense receipt"
+              "Failed to generate PDF for tradelicense receipt",500
             );
           }
           var filename = `${pdfkey}_${new Date().getTime()}`;
@@ -89,12 +90,12 @@ router.post(
           });
           pdfResponse.data.pipe(res);
         } else {
-          return renderError(res, "There is no bill for this id");
+          return renderError(res, "There is no bill for this id",404);
         }
       } else {
         return renderError(
           res,
-          "There is no tradelicense for you for this applicationNumber"
+          "There is no tradelicense for you for this applicationNumber",404
         );
       }
     } catch (ex) {
@@ -110,12 +111,12 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null",400);
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
         res,
-        "tenantId and applicationNumber are mandatory to generate the tlreceipt"
+        "tenantId and applicationNumber are mandatory to generate the tlreceipt",400
       );
     }
 
@@ -129,7 +130,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of tradelicense");
+        return renderError(res, "Failed to query details of tradelicense",500);
       }
       var tradelicenses = restradelicense.data;
 
@@ -144,7 +145,7 @@ router.post(
         if (status != "APPROVED")
           return renderError(
             res,
-            `tlcertificate allowed only on Approved status, but current application status is ${status}`
+            `tlcertificate allowed only on Approved status, but current application status is ${status}`,400
           );
         try {
           pdfResponse = await create_pdf(
@@ -156,7 +157,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, "Failed to generate PDF for tradelicense");
+          return renderError(res, "Failed to generate PDF for tradelicense",500);
         }
         var filename = `${pdfkey}_${new Date().getTime()}`;
         res.writeHead(200, {
@@ -167,7 +168,7 @@ router.post(
       } else {
         return renderError(
           res,
-          "There is no tradelicense for you for this applicationNumber"
+          "There is no tradelicense for you for this applicationNumber",404
         );
       }
     } catch (ex) {
@@ -183,12 +184,12 @@ router.post(
     var applicationNumber = req.query.applicationNumber;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null");
+      return renderError(res, "requestinfo can not be null",400);
     }
     if (!tenantId || !applicationNumber) {
       return renderError(
         res,
-        "tenantId and applicationNumber are mandatory to generate the tlreceipt"
+        "tenantId and applicationNumber are mandatory to generate the tlreceipt",400
       );
     }
 
@@ -202,7 +203,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of tradelicense");
+        return renderError(res, "Failed to query details of tradelicense",500);
       }
       var tradelicenses = restradelicense.data;
 
@@ -216,15 +217,15 @@ router.post(
         var status = tradelicenses.Licenses[0].status;
         var applicationType = tradelicenses.Licenses[0].applicationType;
         if (applicationType != "RENEWAL")
-        return renderError(
-          res,
-          `tlrenewalcertificate allowed only on renewal applications`
-        );
+          return renderError(
+            res,
+            `tlrenewalcertificate allowed only on renewal applications`,400
+          );
         if (status != "APPROVED")
-        return renderError(
-          res,
-          `tlrenewalcertificate allowed only on Approved status, but current application status is ${status}`
-        );
+          return renderError(
+            res,
+            `tlrenewalcertificate allowed only on Approved status, but current application status is ${status}`,400
+          );
         try {
           pdfResponse = await create_pdf(
             tenantId,
@@ -235,7 +236,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, "Failed to generate PDF for tradelicense");
+          return renderError(res, "Failed to generate PDF for tradelicense",500);
         }
         var filename = `${pdfkey}_${new Date().getTime()}`;
         res.writeHead(200, {
@@ -246,7 +247,7 @@ router.post(
       } else {
         return renderError(
           res,
-          "There is no tradelicense for you for this applicationNumber"
+          "There is no tradelicense for you for this applicationNumber",404
         );
       }
     } catch (ex) {

@@ -28,12 +28,24 @@ async function search_epass(uuid, tenantId, requestinfo) {
   });
 }
 
-async function search_property(uuid, tenantId, requestinfo, allowCitizenTOSearchOthersRecords) {
+async function search_property(
+  uuid,
+  tenantId,
+  requestinfo,
+  allowCitizenTOSearchOthersRecords
+) {
+  // currently single property pdfs supported
+  if (uuid.split(",").length > 1) {
+    uuid = uuid.split(",")[0].trim();
+  }
   var params = {
     tenantId: tenantId,
     uuids: uuid,
   };
-  if (checkIfCitizen(requestinfo) && (allowCitizenTOSearchOthersRecords!= true)) {
+  if (
+    checkIfCitizen(requestinfo) &&
+    allowCitizenTOSearchOthersRecords != true
+  ) {
     var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
     var userName = requestinfo.RequestInfo.userInfo.userName;
     params["mobileNumber"] = mobileNumber || userName;
@@ -42,20 +54,20 @@ async function search_property(uuid, tenantId, requestinfo, allowCitizenTOSearch
     method: "post",
     url: url.resolve(config.host.pt, config.paths.pt_search),
     data: requestinfo,
-    params
+    params,
   });
 }
 
 async function search_workflow(applicationNumber, tenantId, requestinfo) {
   var params = {
     tenantId: tenantId,
-    businessIds: applicationNumber
+    businessIds: applicationNumber,
   };
   return await axios({
     method: "post",
     url: url.resolve(config.host.workflow, config.paths.workflow_search),
     data: requestinfo,
-    params
+    params,
   });
 }
 
@@ -73,7 +85,7 @@ async function search_payment(consumerCodes, tenantId, requestinfo) {
     method: "post",
     url: url.resolve(config.host.payments, config.paths.payment_search),
     data: requestinfo,
-    params
+    params,
   });
 }
 
@@ -103,7 +115,7 @@ async function search_tllicense(applicationNumber, tenantId, requestinfo) {
     method: "post",
     url: url.resolve(config.host.tl, config.paths.tl_search),
     data: requestinfo,
-    params
+    params,
   });
 }
 
@@ -149,5 +161,5 @@ module.exports = {
   search_bill,
   search_payment,
   search_tllicense,
-  search_workflow
+  search_workflow,
 };
