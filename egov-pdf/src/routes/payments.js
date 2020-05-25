@@ -20,12 +20,13 @@ router.post(
     var consumerCode = req.query.consumerCode;
     var requestinfo = req.body;
     if (requestinfo == undefined) {
-      return renderError(res, "requestinfo can not be null",400);
+      return renderError(res, "requestinfo can not be null", 400);
     }
     if (!tenantId || !consumerCode) {
       return renderError(
         res,
-        "tenantId and consumerCode are mandatory to generate the receipt",400
+        "tenantId and consumerCode are mandatory to generate the receipt",
+        400
       );
     }
     try {
@@ -34,7 +35,7 @@ router.post(
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);
-        return renderError(res, "Failed to query details of the payment",500);
+        return renderError(res, "Failed to query details of the payment", 500);
       }
       var payments = resProperty.data;
       if (payments && payments.Payments && payments.Payments.length > 0) {
@@ -50,7 +51,7 @@ router.post(
         } catch (ex) {
           console.log(ex.stack);
           if (ex.response && ex.response.data) console.log(ex.response.data);
-          return renderError(res, "Failed to generate PDF for payment",500);
+          return renderError(res, "Failed to generate PDF for payment", 500);
         }
 
         var filename = `${pdfkey}_${new Date().getTime()}`;
@@ -62,7 +63,11 @@ router.post(
         });
         pdfResponse.data.pipe(res);
       } else {
-        return renderError(res, "There is no payment done by you for this id",404);
+        return renderError(
+          res,
+          "There is no payment done by you for this id",
+          404
+        );
       }
     } catch (ex) {
       console.log(ex.stack);
