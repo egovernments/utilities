@@ -40,6 +40,7 @@ module.exports = {
     user: process.env.EGOV_USER_HOST || HOST,
     payments: process.env.EGOV_PAYMENTS_HOST || HOST,
     bill: process.env.EGOV_SEARCHER_HOST || HOST,
+    workflow: process.env.EGOV_WORKFLOW_HOST || HOST
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
@@ -51,5 +52,6 @@ module.exports = {
     download_url: "/download/epass",
     payment_search: "/collection-services/payments/_search",
     bill_search: "/egov-searcher/bill-genie/billswithaddranduser/_get",
+    workflow_search: "/egov-workflow-v2/egov-wf/process/_search"
   },
 };

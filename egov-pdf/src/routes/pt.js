@@ -8,6 +8,7 @@ var {
   search_bill,
   search_payment,
   create_pdf,
+  search_workflow,
 } = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
@@ -48,6 +49,33 @@ router.post(
         properties.Properties &&
         properties.Properties.length > 0
       ) {
+        var creationReason = properties.Properties[0].creationReason;
+        if (creationReason != "MUTATION")
+          return renderError(
+            res,
+            "ptmutation certificate allowed only on mutation applications"
+          );
+        try {
+          var applicationNumber = properties.Properties[0].acknowldgementNumber;
+          var workflowResponse = await search_workflow(
+            applicationNumber,
+            tenantId,
+            requestinfo
+          );
+          var status = workflowResponse.data.ProcessInstances[0].state.state;
+          if (status != "APPROVED")
+            return renderError(
+              res,
+              `ptmutation certificate allowed only on Approved status, but current application status is ${status}`
+            );
+        } catch (ex) {
+          console.log(ex.stack);
+          if (ex.response && ex.response.data) console.log(ex.response.data);
+          return renderError(
+            res,
+            "Failed to get status for property from workflow"
+          );
+        }
         var pdfResponse;
         var pdfkey = config.pdf.ptmutationcertificate_pdf_template;
         try {
@@ -97,7 +125,7 @@ router.post(
     }
     try {
       try {
-        resProperty = await search_property(uuid, tenantId, requestinfo);
+        resProperty = await search_property(uuid, tenantId, requestinfo, true);
       } catch (ex) {
         console.log(ex.stack);
         if (ex.response && ex.response.data) console.log(ex.response.data);

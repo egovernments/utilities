@@ -28,12 +28,12 @@ async function search_epass(uuid, tenantId, requestinfo) {
   });
 }
 
-async function search_property(uuid, tenantId, requestinfo) {
+async function search_property(uuid, tenantId, requestinfo, allowCitizenTOSearchOthersRecords) {
   var params = {
     tenantId: tenantId,
     uuids: uuid,
   };
-  if (checkIfCitizen(requestinfo)) {
+  if (checkIfCitizen(requestinfo) && (allowCitizenTOSearchOthersRecords!= true)) {
     var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
     var userName = requestinfo.RequestInfo.userInfo.userName;
     params["mobileNumber"] = mobileNumber || userName;
@@ -41,6 +41,19 @@ async function search_property(uuid, tenantId, requestinfo) {
   return await axios({
     method: "post",
     url: url.resolve(config.host.pt, config.paths.pt_search),
+    data: requestinfo,
+    params
+  });
+}
+
+async function search_workflow(applicationNumber, tenantId, requestinfo) {
+  var params = {
+    tenantId: tenantId,
+    businessIds: applicationNumber
+  };
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.workflow, config.paths.workflow_search),
     data: requestinfo,
     params
   });
@@ -136,4 +149,5 @@ module.exports = {
   search_bill,
   search_payment,
   search_tllicense,
+  search_workflow
 };

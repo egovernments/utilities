@@ -140,6 +140,12 @@ router.post(
       ) {
         var pdfResponse;
         var pdfkey = config.pdf.tlcertificate_pdf_template;
+        var status = tradelicenses.Licenses[0].status;
+        if (status != "APPROVED")
+          return renderError(
+            res,
+            `tlcertificate allowed only on Approved status, but current application status is ${status}`
+          );
         try {
           pdfResponse = await create_pdf(
             tenantId,
@@ -207,6 +213,18 @@ router.post(
       ) {
         var pdfResponse;
         var pdfkey = config.pdf.tlrenewalcertificate_pdf_template;
+        var status = tradelicenses.Licenses[0].status;
+        var applicationType = tradelicenses.Licenses[0].applicationType;
+        if (applicationType != "RENEWAL")
+        return renderError(
+          res,
+          `tlrenewalcertificate allowed only on renewal applications`
+        );
+        if (status != "APPROVED")
+        return renderError(
+          res,
+          `tlrenewalcertificate allowed only on Approved status, but current application status is ${status}`
+        );
         try {
           pdfResponse = await create_pdf(
             tenantId,
