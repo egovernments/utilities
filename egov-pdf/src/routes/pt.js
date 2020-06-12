@@ -14,8 +14,8 @@ var {
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
 
 function renderError(res, errorMessage, errorCode) {
-  if (errorCode) res.status(errorCode);
-  res.render("error-message", { message: errorMessage });
+  if (errorCode == undefined) errorCode = 500;
+  res.status(errorCode).send({ errorMessage });
 }
 
 /* GET users listing. */
