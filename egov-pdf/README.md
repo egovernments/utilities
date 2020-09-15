@@ -36,7 +36,22 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 - Consolidated receipt
 
 #### Configurations
-NA
+
+**Steps/guidelines for adding support for new pdf:**
+
+- Make sure the config for pdf is added in the PDF-Service.Refer the PDF service [documentatiom](https://digit-discuss.atlassian.net/l/c/f3APeZPF )
+
+- Follow code of [existing supported PDFs](https://github.com/egovernments/utilities/tree/master/egov-pdf/src/routes) and create new endpoint with suitable search parameters for each PDF
+
+- Put parameters validations, module level validations ex:- application status,applicationtype and api error responses with proper error messages and error codes
+
+- Make sure whatever service is used for preparing data for PDF, search call to them by citizen returns citizens own record only, if not then adjust searchcriteria for them by including citizen mobilenumber or uuid to restrict citizen to create pdfs for his record only. If in the requirement itself it is explained that citizen can get PDF for others records also ex:- billgenie bill PDFs then no need for this check
+
+- Prepare data for pdf by calling required services.
+
+- Use correct pdf key with data to call and return PDF(use “/creatnosave” endpoint of PDF service)
+
+- Add access to endpoint in MDMS for suitable roles
 
 ### API Details
 Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
