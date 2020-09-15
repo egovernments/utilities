@@ -15,8 +15,6 @@ To setup the egov-pdf service in your local system, clone the [utilities Service
 
 ## Running Locally
 
-```bash
-- Provide host url in `HOST` property in config.js
+- Provide host url in `HOST` property in `config.js`
 - Run `npm install`
 - Run `npm start`
-```
