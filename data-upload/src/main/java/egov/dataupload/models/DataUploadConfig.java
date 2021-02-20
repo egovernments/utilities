@@ -16,7 +16,6 @@ public class DataUploadConfig {
     @JsonProperty("service")
     private String service = null;
 
-
     @JsonProperty("mappings")
     private List<Mapping> mappings = null;
 }
