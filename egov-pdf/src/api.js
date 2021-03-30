@@ -133,6 +133,42 @@ async function search_mdms(tenantId, module, master, requestinfo) {
   });
 }
 
+async function search_echallan(tenantId, challanNo,requestinfo) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.challan, config.paths.mcollect_challan_search),
+    data: requestinfo,
+    params: {
+      tenantId: tenantId,
+      challanNo: challanNo,
+    },
+  });
+}
+
+
+async function search_bill_genie(data,requestinfo) {
+   return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.bill_genie_getBill),
+    data: Object.assign(requestinfo, data),
+  });
+}
+
+async function search_billV2(tenantId, consumerCode,serviceId,requestinfo) {
+  //console.log("search_billV2 consumerCode--",consumerCode,"tenantId",tenantId,"serviceId",serviceId);
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mcollectBilling, config.paths.mcollect_bill),
+    data: requestinfo,
+    params: {
+      tenantId: tenantId,
+      consumerCode: consumerCode,
+      service:serviceId
+    },
+  });
+}
+
+
 async function create_pdf(tenantId, key, data, requestinfo) {
   return await axios({
     responseType: "stream",
@@ -164,4 +200,7 @@ module.exports = {
   search_payment,
   search_tllicense,
   search_workflow,
+  search_echallan,
+  search_billV2,
+  search_bill_genie
 };

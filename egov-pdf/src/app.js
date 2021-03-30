@@ -8,6 +8,7 @@ var epassRouter = require("./routes/epass");
 var tlRouter = require("./routes/tl");
 var ptRouter = require("./routes/pt");
 var paymentRouter = require("./routes/payments");
+var mcollectRouter = require("./routes/mcollect");
 // var billRouter = require("./routes/bills");
 
 var app = express();
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(config.app.contextPath + "/download/epass", epassRouter);
 app.use(config.app.contextPath + "/download/TL", tlRouter);
 app.use(config.app.contextPath + "/download/PT", ptRouter);
+app.use(config.app.contextPath + "/download/UC", mcollectRouter);
 app.use(config.app.contextPath + "/download/PAYMENT", paymentRouter);
 // app.use(config.app.contextPath + "/download/BILL", billRouter);
 
