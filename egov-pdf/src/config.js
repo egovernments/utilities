@@ -45,8 +45,8 @@ module.exports = {
     payments: process.env.EGOV_PAYMENTS_HOST || HOST,
     bill: process.env.EGOV_SEARCHER_HOST || HOST,
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
-    challan: process.env.EGOV_ECHALLAN_HOST || HOST,
-    mcollectBilling: process.env.EGOV_BILLING_HOST || HOST
+    challan: process.env.EGOV_ECHALLAN_HOST,
+    mcollectBilling: process.env.EGOV_BILLING_HOST
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
