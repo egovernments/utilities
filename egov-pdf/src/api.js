@@ -190,6 +190,40 @@ async function search_bill_genie(data,requestinfo) {
   });
 }
 
+
+async function search_waterOpenSearch(data,requestinfo) {
+  
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.searcher_water_open_search),
+    data: Object.assign(requestinfo, data),
+  });
+}
+
+async function search_sewerageOpenSearch(data,requestinfo) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.searcher_sewerage_open_search),
+    data: Object.assign(requestinfo, data),
+  });
+}
+
+async function search_bill_genie_water_bills(data,requestinfo) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.bill_genie_waterBills),
+    data: Object.assign(requestinfo, data),
+  });
+}
+
+async function search_bill_genie_sewerage_bills(data,requestinfo) {
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.bill, config.paths.bill_genie_sewerageBills),
+    data: Object.assign(requestinfo, data),
+  });
+}
+
 async function search_billV2(tenantId, consumerCode, serviceId, requestinfo) {
   //console.log("search_billV2 consumerCode--",consumerCode,"tenantId",tenantId,"serviceId",serviceId);
   return await axios({
@@ -255,5 +289,9 @@ module.exports = {
   search_bill_genie,
   search_amendment,
   search_water,
-  search_sewerage
+  search_sewerage,
+  search_waterOpenSearch,
+  search_sewerageOpenSearch,
+  search_bill_genie_water_bills,
+  search_bill_genie_sewerage_bills
 };
