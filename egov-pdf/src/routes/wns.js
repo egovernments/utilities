@@ -10,6 +10,7 @@ var {
   search_sewerageOpenSearch,
   search_bill_genie_water_bills,
   search_bill_genie_sewerage_bills,
+  fetch_bill,
   search_billV2,
   search_payment,
   create_pdf
@@ -431,11 +432,10 @@ router.post(
             if(waterBills.length>0){
               for(let waterBill of waterBills){
                 if(waterBill.status ==='EXPIRED'){
-                  var billresponse = await search_billV2(
+                  var billresponse = await fetch_bill(
                   tenantId, waterBill.consumerCode,
                   waterBill.businessService, requestinfo);
-                
-                  consolidatedResult.Bill.push(billresponse.data.Bill);
+                  consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
                   consolidatedResult.Bill.push(waterBill);
@@ -446,11 +446,10 @@ router.post(
             if(sewerageBills.length>0){
               for(let sewerageBill of sewerageBills){
                 if(sewerageBill.status ==='EXPIRED'){
-                  var billresponse = await search_billV2(
+                  var billresponse = await fetch_bill(
                   tenantId, sewerageBill.consumerCode,
                   sewerageBill.businessService, requestinfo);
-                
-                  consolidatedResult.Bill.push(billresponse.data.Bill);
+                  consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
                   consolidatedResult.Bill.push(sewerageBill);
@@ -505,11 +504,11 @@ router.post(
             if(waterBills.length>0){
               for(let waterBill of waterBills){
                 if(waterBill.status ==='EXPIRED'){
-                  var billresponse = await search_billV2(
+                  var billresponse = await fetch_bill(
                   tenantId, waterBill.consumerCode,
                   waterBill.businessService, requestinfo);
                 
-                  consolidatedResult.Bill.push(billresponse.data.Bill);
+                  consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
                   consolidatedResult.Bill.push(waterBill);
@@ -560,11 +559,11 @@ router.post(
             if(sewerageBills.length>0){
               for(let sewerageBill of sewerageBills){
                 if(sewerageBill.status ==='EXPIRED'){
-                  var billresponse = await search_billV2(
+                  var billresponse = await fetch_bill(
                   tenantId, sewerageBill.consumerCode,
                   sewerageBill.businessService, requestinfo);
                 
-                  consolidatedResult.Bill.push(billresponse.data.Bill);
+                  consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
                   consolidatedResult.Bill.push(sewerageBill);

@@ -76,5 +76,6 @@ module.exports = {
     searcher_sewerage_open_search:"/egov-searcher/sewerage-services/sewerageopensearch/_get",
     bill_genie_waterBills:"/egov-searcher/bill-genie/waterbills/_get",
     bill_genie_sewerageBills:"/egov-searcher/bill-genie/seweragebills/_get",
+    fetch_bill: "/billing-service/bill/v2/_fetchbill"
   },
 };

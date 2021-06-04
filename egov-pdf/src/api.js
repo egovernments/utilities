@@ -238,6 +238,20 @@ async function search_billV2(tenantId, consumerCode, serviceId, requestinfo) {
   });
 }
 
+async function fetch_bill(tenantId, consumerCode, serviceId, requestinfo) {
+  //console.log("search_billV2 consumerCode--",consumerCode,"tenantId",tenantId,"serviceId",serviceId);
+  return await axios({
+    method: "post",
+    url: url.resolve(config.host.mcollectBilling, config.paths.fetch_bill),
+    data: requestinfo,
+    params: {
+      tenantId: tenantId,
+      consumerCode: consumerCode,
+      businessService: serviceId
+    },
+  });
+}
+
 async function search_amendment(tenantId, amendmentId, serviceId, requestinfo) {
   //console.log("search_billV2 consumerCode--",amendmentId,"tenantId",tenantId,"serviceId",serviceId);
   return await axios({
@@ -293,5 +307,6 @@ module.exports = {
   search_waterOpenSearch,
   search_sewerageOpenSearch,
   search_bill_genie_water_bills,
-  search_bill_genie_sewerage_bills
+  search_bill_genie_sewerage_bills,
+  fetch_bill
 };
