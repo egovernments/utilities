@@ -25,7 +25,7 @@ def map_bs(s):
     elif s == 'Advt.Light_Wala_Board':
         return 'Advertisement Tax - Light Wala Board'
     elif s == 'Tx.Electricity_Chungi':
-    	return 'Taxes - Electricty Chungi'
+    	return 'Taxes - Electricty Chungi'	
 
 def connect():
     try:
@@ -38,9 +38,13 @@ def connect():
         print(exception)
 
    
-    mCollectquery = pd.read_sql_query("SELECT chl.challanNo AS \"Challan Number\", INITCAP(chl.businessService) AS \"Business Service\", INITCAP(chl.applicationstatus) AS \"Application Status\", chl.tenantid, adr.locality, ep.totaldue As \"Total Amount Due\", ep.totalamountpaid as \"Total Amount Paid\", INITCAP(ep.paymentmode) AS \"Payment Mode\",INITCAP(ep.paymentstatus) AS \"Payment Status\",eb.billnumber AS \"Bill Number\", INITCAP(eb.status) as \"Bill Status\" FROM eg_echallan chl INNER JOIN eg_challan_address adr ON chl.id=adr.echallanid LEFT OUTER JOIN egcl_bill eb ON chl.challanno=eb.consumercode LEFT OUTER JOIN egcl_paymentdetail epd ON eb.id=epd.billid LEFT OUTER JOIN egcl_payment ep ON ep.id=epd.paymentid WHERE chl.tenantid != 'pb.testing'", conn)
+    mCollectquery = pd.read_sql_query("SELECT DISTINCT(chl.challanNo) AS \"Challan Number\", INITCAP(chl.businessService) AS \"Business Service\", INITCAP(chl.applicationstatus) AS \"Application Status\", chl.tenantid, adr.locality, eb.totalamount AS \"Total Amount Due\" ,eb.billno AS \"Bill Number\", INITCAP(bill.status) as \"Bill Status\" FROM eg_echallan chl INNER JOIN eg_challan_address adr ON chl.id=adr.echallanid LEFT OUTER JOIN egbs_billdetail_v1 eb ON chl.challanno=eb.consumercode LEFT OUTER JOIN egbs_bill_v1 bill ON eb.billid = bill.id WHERE chl.tenantid != 'pb.testing'", conn)
+    paidquery =  pd.read_sql_query("SELECT chl.challanNo AS \"Challan Number\", INITCAP(chl.businessService) AS \"Business Service\", INITCAP(chl.applicationstatus) AS \"Application Status\", chl.tenantid, adr.locality, ep.totaldue AS \"Total Amount Due\", ep.totalamountpaid as \"Total Amount Paid\", INITCAP(ep.paymentmode) AS \"Payment Mode\",INITCAP(ep.paymentstatus) AS \"Payment Status\",eb.billnumber AS \"Bill Number\", INITCAP(eb.status) as \"Bill Status\" FROM eg_echallan chl INNER JOIN eg_challan_address adr ON chl.id=adr.echallanid LEFT OUTER JOIN egcl_bill eb ON chl.challanno=eb.consumercode LEFT OUTER JOIN egcl_paymentdetail epd ON eb.id=epd.billid LEFT OUTER JOIN egcl_payment ep ON ep.id=epd.paymentid WHERE chl.tenantid != 'pb.testing' AND chl.applicationstatus = 'PAID'", conn)
     mcollectgen = pd.DataFrame(mCollectquery)
+    paid = pd.DataFrame(paidquery)
     mcollectgen['Business Service'] = mcollectgen['Business Service'].map(map_bs)
+    
+    mcollectgen = mcollectgen.append(paid)
     
     global uniquetenant
     uniquetenant = mcollectgen['tenantid'].unique()
@@ -57,9 +61,11 @@ def connect():
     mcollectgen['State'] = mcollectgen['tenantid'].apply(lambda x: 'Punjab' if x[0:2]=='pb' else '')
 
     mcollectgen = mcollectgen.drop(columns=['tenantid','locality'])
+    mcollectgen=mcollectgen.drop_duplicates(subset=['Challan Number'],keep='last')
+    mcollectgen=mcollectgen.reset_index(drop=True)
     mcollectgen.fillna("", inplace=True)
-
     
+        
     mcollectgen.to_csv('/tmp/mcollectDatamart.csv')
     print("Datamart exported. Please copy it using kubectl cp command to you required location.")
  
@@ -125,4 +131,3 @@ def enrichLocality(tenantid,locality):
     
 if __name__ == '__main__':
     connect()
-    
