@@ -374,7 +374,7 @@ def connect():
     data['State'] = data['tenantid'].apply(lambda x: 'Punjab' if x[0:2]=='pb' else '')
 
     data = data.drop(columns=['tenantid','locality'])
-    
+    data = data.drop_duplicates(subset=['Application Number'],keep='last')
     data = data[['eDCR Number',
     'Application Number',
  'Application Date',
@@ -432,7 +432,7 @@ def locationApiCall(tenantid):
     paramlist["tenantId"]=tenantid
     response = requests.post("{{REPLACE-WITH-URL}}",params = paramlist,json=body, headers={
        "Connection":"keep-alive","content-type":"application/json;charset=UTF-8", "origin":"{{REPLACE-WITH-URL}}"})
-
+       
     jsondata={}
     if response.status_code == 200:
         jsondata = response.json()
