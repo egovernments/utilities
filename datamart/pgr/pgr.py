@@ -34,7 +34,7 @@ def map_CompSubtype(s):
         return 'Water Pressure Is Very Less' 
     elif s == 'WaterLoggedRoad':
         return 'Water Logged Road'
-    elif s == 'Manhole Cover Missing Or Damaged':
+    elif s == 'ManholeCoverMissingOrDamaged':
         return 'Manhole Cover Missing Or Damaged'
     elif s == 'DamagedOrBlockedFootpath':
         return 'Damaged Or Blocked Footpath'
@@ -84,7 +84,7 @@ def map_CompSubtype(s):
         return 'Town Planning'
     elif s == 'eGovPropertyTax':
         return 'eGov Property Tax'
-    elif s == 'Excessive Ramps Of Shops And Houses':
+    elif s == 'ExcessiveRampsOfShopsAndHouses':
         return 'Excessive Ramps Of Shops And Houses'
     elif s == 'RequestForConstructionOfNewRoadsFootpathsPavements':
         return 'Request For Construction Of New Roads Footpaths Pavements'
@@ -100,7 +100,7 @@ def map_CompSubtype(s):
         return 'How To Pay PT'
     elif s == 'WrongCalculationPT':
         return 'Wrong Calculation PT'
-    elif s == 'Receipt Not Generated':
+    elif s == 'ReceiptNotGenerated':
         return 'Receipt Not Generated'
     elif s == 'others':
         return 'others'
@@ -112,7 +112,7 @@ def map_CompSubtype(s):
         return 'Water Entered House Rainy Season'
     elif s == 'InstallationOfNewStreetLight':
         return 'Installation Of New Street Light'
-    elif s == 'Non Sweeping Of Road':
+    elif s == 'NonSweepingOfRoad':
         return 'Non Sweeping Of Road' 
     elif s == 'CongressGrassCutting':
         return 'Congress Grass Cutting'
@@ -126,10 +126,12 @@ def map_CompSubtype(s):
         return 'Illegal Rehries On Road'
     elif s == 'RoadJalliBroken':
         return 'Road Jalli Broken' 
+    elif s == 'ReplacementOfTrafficLights':
+    	return 'Replacement Of Traffic Lights'
     
 
 def map_CompType(s):
-    Streetlights = ['No Street Light','Street Light Not Working', 'Installation Of New Street Light']
+    Streetlights = ['No Street Light','Street Light Not Working', 'Installation Of New Street Light','Replacement Of Traffic Lights']
 
     Garbage = ['Garbage Needs To Be Cleared','Damaged Garbage Bin','Burning Of Garbage']
 
@@ -254,7 +256,8 @@ def connect():
     pgrgen = pgrgen.drop(columns=['tenantid','locality'])
     
     pgrgen.fillna('', inplace=True)
-    pgrgen.to_csv('/home/priyanka/Desktop/pgrDatamart.csv')
+    pgrgen = pgrgen.drop_duplicates(subset=['Service ID'],keep='last').reset_index(drop=True)
+    pgrgen.to_csv('{{REPLACE-WITH-PATH}}/pgrDatamart.csv')
     print("Datamart exported. Please copy it using kubectl cp command to you required location.")
 
 
