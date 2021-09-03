@@ -41,25 +41,49 @@ def connect():
         print(exception)
    
    
-    waterquery = pd.read_sql_query("SELECT cn.applicationno AS \"Application Number\", cn.id AS \"Connection Id\",cn.connectionno AS \"Connection Number\", cn.status AS \"Status\", srv.connectiontype AS \"Connection Type\",    cn.applicationstatus AS \"Application Status\", CASE WHEN (cn.createdtime != 0) THEN to_timestamp(CAST(cn.createdtime AS bigint)/1000)::date END AS \"Application Start Datetime\", CASE WHEN cn.applicationstatus = 'PENDING_FOR_FIELD_INSPECTION' THEN CASE WHEN (cn.lastmodifiedtime!= 0) THEN to_timestamp(CAST(cn.lastmodifiedtime AS bigint)/1000)::date END END AS \"Application Verified and Sent Forward Datetime\",CASE WHEN cn.applicationstatus = 'PENDING_FOR_CONNECTION_ACTIVATION' THEN CASE WHEN (cn.lastmodifiedtime!= 0) THEN to_timestamp(CAST(cn.lastmodifiedtime AS bigint)/1000)::date END END AS \"Application Approved Datetime\", CASE WHEN cn.applicationstatus = 'CONNECTION_ACTIVATED' THEN CASE WHEN (cn.lastmodifiedtime!= 0) THEN to_timestamp(CAST(cn.lastmodifiedtime AS bigint)/1000)::date END END AS \"Connection Activated Datetime\", CASE WHEN (srv.connectionexecutiondate!= 0) THEN to_timestamp (CAST(srv.connectionexecutiondate AS bigint)/1000)::date END AS \"Connection Execution Datetime\",cn.tenantid, pt.locality, CASE WHEN hld.userid = ptown.userid then 'Yes' else 'No' END AS \"Property Owner is Connection Holder\" FROM (eg_ws_connection cn INNER JOIN eg_ws_service srv ON cn.id = srv.connection_id) INNER JOIN eg_pt_address pt ON pt.propertyid = cn.property_id LEFT OUTER JOIN eg_ws_connectionholder hld ON cn.id = hld.connectionid INNER JOIN eg_pt_owner ptown ON ptown.propertyid = cn.property_id INNER JOIN eg_ws_connection_Audit aud ON cn.id = aud.id WHERE cn.status != 'INACTIVE' AND cn.tenantId != 'pb.testing'", conn)
+    waterquery = pd.read_sql_query("SELECT cn.applicationno AS \"Application Number\", cn.id AS \"Connection Id\",cn.connectionno AS \"Connection Number\", cn.status AS \"Status\", srv.connectiontype AS \"Connection Type\",    cn.applicationstatus AS \"Application Status\", CASE WHEN (cn.createdtime != 0) THEN to_timestamp(CAST(cn.createdtime AS bigint)/1000)::date END AS \"Application Start Datetime\", CASE WHEN (srv.connectionexecutiondate!= 0) THEN to_timestamp (CAST(srv.connectionexecutiondate AS bigint)/1000)::date END AS \"Connection Execution Datetime\",cn.tenantid, pt.locality, CASE WHEN hld.userid = ptown.userid then 'Yes' else 'No' END AS \"Property Owner is Connection Holder\" FROM (eg_ws_connection cn INNER JOIN eg_ws_service srv ON cn.id = srv.connection_id) INNER JOIN eg_pt_address pt ON pt.propertyid = cn.property_id LEFT OUTER JOIN eg_ws_connectionholder hld ON cn.id = hld.connectionid INNER JOIN eg_pt_owner ptown ON ptown.propertyid = cn.property_id INNER JOIN eg_ws_connection_Audit aud ON cn.id = aud.id WHERE cn.status != 'INACTIVE' AND cn.tenantId != 'pb.testing'", conn)
     waterpaymentquery = pd.read_sql_query("SELECT ws.applicationno AS \"Application Number\",ep.totaldue AS \"Total Amount Due\", ep.totalamountpaid AS \"Total Amount Paid\",ep.paymentmode AS \"Payment Mode\", ep.paymentstatus AS \"Payment Status\", ws.adhocpenalty AS \"Penalty\",ws.adhocrebate AS \"Interest\" FROM egcl_payment ep INNER JOIN egcl_paymentdetail epd ON ep.id=epd.paymentid INNER JOIN egcl_bill eb ON eb.id=epd.billid INNER JOIN eg_ws_connection ws ON ws.applicationno=eb.consumercode WHERE ws.status != 'INACTIVE' AND ws.tenantId != 'pb.testing'",conn)
+    waterverifiedquery = pd.read_sql_query("Select businessid as \"Application Number\",CASE WHEN (createdtime != 0) THEN to_timestamp(CAST(createdtime AS bigint)/1000)::date END AS \"Application Verified and Sent Forward Datetime\" from eg_wf_processinstance_v2  where businessservice='NewWS1' or businessservice ='DEACTIVATE-NewWS1' and status in (select uuid from eg_wf_state_v2 where state='PENDING_FOR_FIELD_INSPECTION')",conn)
+    waterapprovedquery = pd.read_sql_query("Select businessid as \"Application Number\", CASE WHEN (createdtime != 0) THEN to_timestamp(CAST(createdtime AS bigint)/1000)::date END AS \"Application Approved Datetime\" from eg_wf_processinstance_v2 where businessservice='NewWS1'  or businessservice ='DEACTIVATE-NewWS1'   and status in (select uuid from eg_wf_state_v2 where state='APPROVED')",conn)
+    wateractivatedquery = pd.read_sql_query("Select businessid as \"Application Number\", CASE WHEN (createdtime != 0) THEN to_timestamp(CAST(createdtime AS bigint)/1000)::date END AS \"Connection Activated Datetime\" from eg_wf_processinstance_v2 where businessservice='NewWS1' or businessservice ='DEACTIVATE-NewWS1' and status in (select uuid from eg_wf_state_v2 where state='CONNECTION_ACTIVATED')",conn)
+
     seweragepaymentquery = pd.read_sql_query("SELECT sw.applicationno AS \"Application Number\", ep.totaldue AS \"Total Amount Due\", ep.totalamountpaid AS \"Total Amount Paid\", ep.paymentmode AS \"Payment Mode\", ep.paymentstatus AS \"Payment Status\", sw.adhocpenalty AS \"Penalty\", sw.adhocrebate AS \"Interest\" FROM egcl_payment ep INNER JOIN egcl_paymentdetail epd ON ep.id=epd.paymentid INNER JOIN egcl_bill eb ON eb.id=epd.billid INNER JOIN eg_sw_connection sw ON sw.applicationno=eb.consumercode WHERE sw.status != 'INACTIVE' AND sw.tenantId != 'pb.testing'",conn)
-    seweragequery = pd.read_sql_query("SELECT cn.applicationno AS \"Application Number\", cn.id AS \"Connection Id\",cn.connectionno AS \"Connection Number\", cn.status AS \"Status\",   srv.connectiontype AS \"Connection Type\",    cn.applicationstatus AS \"Application Status\", CASE WHEN (cn.createdtime != 0) THEN to_timestamp(CAST(cn.createdtime AS bigint)/1000)::date END AS \"Application Start Datetime\",  CASE WHEN cn.applicationstatus = 'PENDING_FOR_FIELD_INSPECTION' THEN CASE WHEN (cn.lastmodifiedtime!= 0) THEN to_timestamp(CAST(cn.lastmodifiedtime AS bigint)/1000)::date END END AS \"Application Verified and Sent Forward Datetime\",CASE WHEN cn.applicationstatus = 'PENDING_FOR_CONNECTION_ACTIVATION' THEN CASE WHEN (cn.lastmodifiedtime!= 0) THEN to_timestamp(CAST(cn.lastmodifiedtime AS bigint)/1000)::date END END AS \"Application Approved Datetime\", CASE WHEN cn.applicationstatus = 'CONNECTION_ACTIVATED' THEN CASE WHEN (cn.lastmodifiedtime!= 0) THEN to_timestamp(CAST(cn.lastmodifiedtime AS bigint)/1000)::date END END AS \"Connection Activated Datetime\", CASE WHEN (srv.connectionexecutiondate!= 0) THEN to_timestamp(CAST(srv.connectionexecutiondate AS bigint)/1000)::date END  \"Connection Execution Datetime\",cn.tenantid, pt.locality, CASE WHEN hld.userid = ptown.userid then 'Yes' else 'No' END AS \"Property Owner is Connection Holder\" FROM (eg_sw_connection cn  INNER JOIN eg_sw_service srv ON cn.id = srv.connection_id) INNER JOIN eg_pt_address pt ON pt.propertyid = cn.property_id LEFT OUTER JOIN eg_sw_connectionholder hld ON cn.id = hld.connectionid INNER JOIN eg_pt_owner ptown ON ptown.propertyid = cn.property_id WHERE cn.status != 'INACTIVE' AND cn.tenantId != 'pb.testing'",conn)
+    seweragequery = pd.read_sql_query("SELECT cn.applicationno AS \"Application Number\", cn.id AS \"Connection Id\",cn.connectionno AS \"Connection Number\", cn.status AS \"Status\",   srv.connectiontype AS \"Connection Type\",    cn.applicationstatus AS \"Application Status\", CASE WHEN (cn.createdtime != 0) THEN to_timestamp(CAST(cn.createdtime AS bigint)/1000)::date END AS \"Application Start Datetime\", CASE WHEN (srv.connectionexecutiondate!= 0) THEN to_timestamp(CAST(srv.connectionexecutiondate AS bigint)/1000)::date END  \"Connection Execution Datetime\",cn.tenantid, pt.locality, CASE WHEN hld.userid = ptown.userid then 'Yes' else 'No' END AS \"Property Owner is Connection Holder\" FROM (eg_sw_connection cn  INNER JOIN eg_sw_service srv ON cn.id = srv.connection_id) INNER JOIN eg_pt_address pt ON pt.propertyid = cn.property_id LEFT OUTER JOIN eg_sw_connectionholder hld ON cn.id = hld.connectionid INNER JOIN eg_pt_owner ptown ON ptown.propertyid = cn.property_id WHERE cn.status != 'INACTIVE' AND cn.tenantId != 'pb.testing'",conn)
+    sewerageverifiedquery = pd.read_sql_query("Select businessid as \"Application Number\",CASE WHEN (createdtime != 0) THEN to_timestamp(CAST(createdtime AS bigint)/1000)::date END AS \"Application Verified and Sent Forward Datetime\" from eg_wf_processinstance_v2  where businessservice='NewSW1' or businessservice ='DEACTIVATE-NewSW1' and status in (select uuid from eg_wf_state_v2 where state='PENDING_FOR_FIELD_INSPECTION')",conn)
+    sewerageapprovedquery = pd.read_sql_query("Select businessid as \"Application Number\", CASE WHEN (createdtime != 0) THEN to_timestamp(CAST(createdtime AS bigint)/1000)::date END AS \"Application Approved Datetime\" from eg_wf_processinstance_v2 where businessservice='NewSW1' or businessservice ='DEACTIVATE-NewSW1' and status in (select uuid from eg_wf_state_v2 where state='APPROVED')",conn)
+    sewerageactivatedquery = pd.read_sql_query("Select businessid as \"Application Number\", CASE WHEN (createdtime != 0) THEN to_timestamp(CAST(createdtime AS bigint)/1000)::date END AS \"Connection Activated Datetime\" from eg_wf_processinstance_v2 where businessservice='NewSW1' or businessservice ='DEACTIVATE-NewSW1' and status in (select uuid from eg_wf_state_v2 where state='CONNECTION_ACTIVATED')",conn)
+  
   
     watergen = pd.DataFrame(waterquery)
     waterpayment = pd.DataFrame(waterpaymentquery)
+    waterverified = pd.DataFrame(waterverifiedquery)
+    waterapproved = pd.DataFrame(waterapprovedquery)
+    wateractivated = pd.DataFrame(wateractivatedquery)
+    
     seweragegen = pd.DataFrame(seweragequery)
     seweragepayment = pd.DataFrame(seweragepaymentquery)
+    sewerageverified = pd.DataFrame(sewerageverifiedquery) 
+    sewerageapproved = pd.DataFrame(sewerageapprovedquery)
+    sewerageactivated = pd.DataFrame(sewerageactivatedquery) 
     
     waterdata = pd.DataFrame()
     seweragedata = pd.DataFrame()
 
     waterdata = pd.merge(watergen,waterpayment,left_on='Application Number',right_on='Application Number',how='left')
+    waterdata = pd.merge(waterdata,waterverified,left_on='Application Number',right_on='Application Number',how='left')
+    waterdata = pd.merge(waterdata,waterapproved,left_on='Application Number',right_on='Application Number',how='left')
+    waterdata = pd.merge(waterdata,wateractivated,left_on='Application Number',right_on='Application Number',how='left')
+
+    
     seweragedata = pd.merge(seweragegen, seweragepayment,left_on='Application Number',right_on='Application Number',how='left' )
+    seweragedata = pd.merge(seweragedata, sewerageverified,left_on='Application Number',right_on='Application Number',how='left' )
+    seweragedata = pd.merge(seweragedata, sewerageapproved,left_on='Application Number',right_on='Application Number',how='left' )
+    seweragedata = pd.merge(seweragedata, sewerageactivated,left_on='Application Number',right_on='Application Number',how='left' )
+
    
     waterdata['Application Status'] = waterdata['Application Status'].map(map_appstatus)    
     seweragedata['Application Status'] = seweragedata['Application Status'].map(map_appstatus)    
-   
+     
     waterdata = waterdata.rename(columns={"Application Start Datetime": "Application_Start_Datetime","Application Verified and Sent Forward Datetime":"Application_Verified_and_Sent_Forward_Datetime","Application Approved Datetime":"Application_Approved_Datetime","Connection Activated Datetime":"Connection_Activated_Datetime","Connection Execution Datetime":"Connection_Execution_Datetime"})
     seweragedata = seweragedata.rename(columns={"Application Start Datetime": "Application_Start_Datetime","Application Verified and Sent Forward Datetime":"Application_Verified_and_Sent_Forward_Datetime","Application Approved Datetime":"Application_Approved_Datetime","Connection Activated Datetime":"Connection_Activated_Datetime","Connection Execution Datetime":"Connection_Execution_Datetime"})
   
@@ -88,7 +112,7 @@ def connect():
     seweragedata['Connection_Execution_Datetime'] = seweragedata['Connection_Execution_Datetime'].dt.strftime("%d-%m-%y") 
     
     waterdata = waterdata.rename(columns={"Application_Start_Datetime":"Application Start Datetime","Application_Verified_and_Sent_Forward_Datetime":"Application Verified and Sent Forward Datetime","Application_Approved_Datetime":"Application Approved Datetime","Connection_Activated_Datetime":"Connection Activated Datetime","Connection_Execution_Datetime":"Connection Execution Datetime"})
-    seweragedata = waterdata.rename(columns={"Application_Start_Datetime":"Application Start Datetime","Application_Verified_and_Sent_Forward_Datetime":"Application Verified and Sent Forward Datetime","Application_Approved_Datetime":"Application Approved Datetime","Connection_Activated_Datetime":"Connection Activated Datetime","Connection_Execution_Datetime":"Connection Execution Datetime"})
+    seweragedata = seweragedata.rename(columns={"Application_Start_Datetime":"Application Start Datetime","Application_Verified_and_Sent_Forward_Datetime":"Application Verified and Sent Forward Datetime","Application_Approved_Datetime":"Application Approved Datetime","Connection_Activated_Datetime":"Connection Activated Datetime","Connection_Execution_Datetime":"Connection Execution Datetime"})
     
     global uniquetenant
     uniquetenantwater = waterdata['tenantid'].unique()
@@ -114,10 +138,13 @@ def connect():
     seweragedata['State'] = seweragedata['tenantid'].apply(lambda x: 'Punjab' if x[0:2]=='pb' else '')
    
     waterdata = waterdata.drop(columns=['tenantid','locality'])
-    seweragedata = seweragedata.drop(columns=['tenantid','locality'])
+    seweragedata = seweragedata.drop(columns=['tenantid','locality','Connection Type'])
 
     waterdata.fillna('', inplace=True)
     seweragedata.fillna('', inplace=True)
+
+    waterdata = waterdata.drop_duplicates(subset=['Application Number'],keep='last').reset_index(drop=True)
+    seweragedata = seweragedata.drop_duplicates(subset=['Application Number'],keep='last').reset_index(drop=True)
     
     waterdata.to_csv('/tmp/waterDatamart.csv')
     seweragedata.to_csv('/tmp/sewerageDatamart.csv')
@@ -185,4 +212,3 @@ def enrichLocality(tenantid,locality):
         
 if __name__ == '__main__':
     connect()
-    
