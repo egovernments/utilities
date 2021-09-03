@@ -395,8 +395,8 @@ def connect():
 
     newdata = newdata.drop(columns=['temp','Penalty'])
     renewdata = pd.merge(renewdata,newdata[['License Number','Total Amount Paid']],on='License Number', how='left')
-    
-    renewdata = renewdata.drop_duplicates(subset = ["License Number"])
+    newdata = newdata.drop_duplicates(subset = ["License Number"]).reset_index(drop=True)
+    renewdata = renewdata.drop_duplicates(subset = ["License Number"]).reset_index(drop=True)
     renewdata = renewdata.rename(columns={"Total Amount Paid_y":"Old Trade license Amount","Total Amount Paid_x": "Total Amount Paid"})
     
     newdata.fillna("", inplace=True)
