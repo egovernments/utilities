@@ -217,12 +217,12 @@ def connect():
     fsmdata=pd.merge(fsmdata,rejectedstatusData,left_on='Application ID',right_on='Application ID',how='left')
     fsmdata=pd.merge(fsmdata,cancelledstatusData,left_on='Application ID',right_on='Application ID',how='left')
     fsmdata=pd.merge(fsmdata,citizenfeedbackstatusData,left_on='Application ID',right_on='Application ID',how='left')
-    fsmdata=pd.merge(fsmdata,completedstatusData,left_on='Application ID',right_on='Application ID',how='left')
-    fsmdata['Application Status'] = data['Application Status'].map(map_status) 
+    fsmdata=pd.merge(fsmdata,completedstatusData,left_on='Application ID',right_on='Application ID',how='left') 
+    fsmdata['Application Status'] = fsmdata['Application Status'].map(map_status) 
     fsmdata['Property Type']=fsmdata['Property Type'].map(map_propertytype)
     fsmdata['Property Sub Type']=fsmdata['Property Sub Type'].map(map_propertySubType)
     fsmdata['SLA Planned (In Days)']=2 
-    fsmdata=fsmdata.fillna('N/A')
+    fsmdata=fsmdata.fillna('N/A')  
     fsmdata['Application Source'] =fsmdata['Application Source'].map(mapApplicationChannel)  
     fsmdata['OnSite Sanitation Type']= fsmdata['OnSite Sanitation Type'].map(map_santationtype)
     fsmdata['Application Completed Time']=fsmdata['Application Completed Time'].replace('N/A', '')   
@@ -263,7 +263,7 @@ def connect():
     fsmdata['Locality'] = fsmdata.apply(lambda x : enrichLocality(x.tenantid,x.Locality), axis=1)
     fsmdata = fsmdata.drop(columns=['tenantid'])
     fsmdata.fillna('', inplace=True)
-    
+    fsmdata=fsmdata.drop_duplicates(subset = ["Application ID"]).reset_index(drop=True)
     fsmdata.to_csv('/tmp/fsmDatamart.csv')
 
     print("Datamart exported. Please copy it using kubectl cp command to your required location.")
