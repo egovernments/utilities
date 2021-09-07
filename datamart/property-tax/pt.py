@@ -328,6 +328,7 @@ def connect():
     data['Property Subtype']=data['Property Subtype'].map({'Independentproperty':'Independent Property','Sharedproperty':'Shared Property'})
     
     data['Subownership Category'] = data['Subownership Category'].map(map_subownership)
+    data = data.drop_duplicates(subset = ["Property Id"]).reset_index(drop=True)
     data.fillna("", inplace=True)
     data.to_csv('/tmp/ptDatamart.csv')
     print("Datamart exported. Please copy it using kubectl cp command to you required location.")
@@ -393,3 +394,4 @@ def enrichLocality(tenantid,locality):
         
 if __name__ == '__main__':
     connect()
+    
