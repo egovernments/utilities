@@ -331,66 +331,66 @@ def map_usagesubtype(s):
     if s == 'Subdivisiona-1':
         return 'Subdivision a-1'
     elif s == 'Subdivisiona-2':
-        return ''
+        return 'Subdivision a-2'
     elif s == 'Subdivisiona-3':
-        return '' 
+        return 'Subdivision a-3' 
     elif s == 'Subdivisiona-4':
-        return '' 
+        return 'Subdivision a-4' 
     elif s == 'Subdivisiona-5':
-        return '' 
+        return 'Subdivision a-5' 
     elif s == 'Subdivisiona-6':
-        return ''
+        return 'Subdivision a-6'
     elif s == 'Subdivisionb-1':
-        return '' 
+        return 'Subdivision b-1' 
     elif s == 'Subdivisionb-2':
-        return '' 
+        return 'Subdivision b-2' 
     elif s == 'Subdivisionc-1':
-        return '' 
+        return 'Subdivision c-1' 
     elif s == 'Subdivisionc-2':
-        return '' 
+        return 'Subdivision c-2' 
     elif s == 'Subdivisionc-3':
-        return '' 
+        return 'Subdivision c-3' 
     elif s == 'Subdivisiond-1':
-        return '' 
+        return 'Subdivision d-1' 
     elif s == 'Subdivisiond-2':
-        return '' 
+        return 'Subdivision d-2' 
     elif s == 'Subdivisiond-3':
-        return '' 
+        return 'Subdivision d-3' 
     elif s == 'Subdivisiond-4':
-        return '' 
+        return 'Subdivision d-4' 
     elif s == 'Subdivisiond-5':
-        return '' 
+        return 'Subdivision d-5' 
     elif s == 'Subdivisiond-6':
-        return '' 
+        return 'Subdivision d-6' 
     elif s == 'Subdivisiond-7':
-        return ''
+        return 'Subdivision d-7'
     elif s == 'Subdivisione-1':
-        return '' 
+        return 'Subdivision e-1' 
     elif s == 'Subdivisione-2':
-        return '' 
+        return 'Subdivision e-2' 
     elif s == 'Subdivisione-3':
-        return '' 
+        return 'Subdivision e-4' 
     elif s == 'Subdivisione-4':
-        return '' 
+        return 'Subdivision e-4' 
     elif s == 'Subdivisione-5':
-        return ''
+        return 'Subdivision e-5'
     elif s == 'Subdivisionf-1':
-        return '' 
+        return 'Subdivision f-1' 
     elif s == 'Subdivisionf-2':
-        return '' 
+        return 'Subdivision f-2' 
     elif s == 'Subdivisionf-3':
-        return '' 
+        return 'Subdivision f-3' 
     elif s == 'Subdivisiong-1':
-        return '' 
+        return 'Subdivision g-1' 
     elif s == 'Subdivisiong-2':
-        return '' 
+        return 'Subdivision g-2' 
     elif s == 'Subdivisiong-3':
-        return '' 
+        return 'Subdivision g-3' 
     elif s == 'Group_H_Storage':
         return 'Group H Storage'
     elif s == 'Group_J_Hazardous':
         return 'Group J Hazardous'
-    
+
 def map_gender(s):
     if s == 1.0:
         return 'Female'
@@ -488,8 +488,14 @@ def connect():
     data['City'] = data['tenantid'].apply(lambda x: x[3:])
     data['City']=data['City'].str.upper().str.title()
     data['State'] = data['tenantid'].apply(lambda x: 'Punjab' if x[0:2]=='pb' else '')
+    
+    data = data.rename(columns={"Usage Type":"usage_type","Usage Subtype":"usage_subtype"})
+    group = data.groupby('Application Number').agg(usage_type=('usage_type', list), usage_subtype=('usage_subtype', list)).reset_index()
+    group = group.rename(columns={"usage_type":"Usage Type","usage_subtype":"Usage Subtype"})
+    data = data.drop_duplicates(subset = ["Application Number"]).reset_index(drop=True)
+    data = data.drop(columns=['tenantid','locality','usage_type','usage_subtype'])
+    data = pd.merge(data, group, how="left", on=["Application Number"])
 
-    data = data.drop(columns=['tenantid','locality'])
     data.fillna("", inplace=True)
      
     data.to_csv('/tmp/FNDatamart.csv')
@@ -531,7 +537,7 @@ def locationApiCall(tenantid):
         jsondata = jsondata['boundary']
     else:
         return '' 
-    
+
     dictionary={} 
     for v in jsondata:
         dictionary[v['code']]= v['name']
