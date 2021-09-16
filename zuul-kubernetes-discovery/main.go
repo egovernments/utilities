@@ -79,11 +79,17 @@ func getZuulRoutes(s *v1.ServiceList) (r *[]Route) {
 			if val, ok := s.Annotations[sAnnotation]; ok {
 				path := fmt.Sprintf("%s", val)
 				serviceName := s.Name
+				serviceNameSpace = s.Namespace
 				replacedPath, ok := alternateRouteMap[path]
+				internalGatewayHost, _ := os.LookupEnv("INTERNAL_GATEWAY_HOST")
+				internalGatewayNameSpace, _ := os.LookupEnv("INTERNAL_GATEWAY_NAMESPACE")
 				if ok {
 					serviceName = replacedPath
 				}
-				url := fmt.Sprintf("http://%s.%s:%d/", serviceName, s.Namespace, s.Spec.Ports[0].Port)
+				if strings.Compare(internalGatewayHost, serviceName) == 1 {
+					serviceNameSpace = internalGatewayNameSpace
+				}
+				url := fmt.Sprintf("http://%s.%s:%d/", serviceName, serviceNameSpace, s.Spec.Ports[0].Port)
 				routes = append(routes, Route{path, url})
 				log.Printf("Configuring service %s routing to service URL %s \n", path, url)
 			}
