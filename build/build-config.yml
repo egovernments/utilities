@@ -30,7 +30,7 @@ config:
       - work-dir: "kuberhealthy-checks"
         image-name: "kuberhealthy-checks"
 
-  - name: "builds/digit-impel-builds/utilities/egov-pdf"
+  - name: "builds/utilities/egov-pdf"
     build:
       - work-dir: "egov-pdf"
         image-name: "egov-pdf"  
