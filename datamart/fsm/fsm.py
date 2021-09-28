@@ -108,7 +108,7 @@ def mapDistrict(s):
     else:
         return s;
 
-def map_paymentsource(s):
+def map_paymentsourceFromMode(s):
     if s=='Online' :
         return 'Online'
     else :
@@ -238,6 +238,7 @@ def connect():
     fsmdata['District']=fsmdata['City']
     fsmdata['District']=fsmdata['District'].map(mapDistrict)
     fsmdata['Payment Source']= fsmdata['Payment Source'].map(map_paymentsource)
+    fsmdata['Payment Source']=fsmdata['Payment Source'].map(map_paymentsourceFromMode)
     fsmdata['Waste Collected']=fsmdata['Waste Collected'].apply(np.int64)
     fsmdata['Payment Amount']=fsmdata['Payment Amount'].apply(np.int64)
     fsmdata['Rating']=fsmdata['Rating'].replace('N/A','')
