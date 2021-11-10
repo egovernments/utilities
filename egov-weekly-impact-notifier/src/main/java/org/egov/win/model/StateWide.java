@@ -29,7 +29,7 @@ public class StateWide {
 	private List<Map<String, Object>> noOfCitizensResgistered;
 
 	public boolean isStateWideDataEmpty() {
-		return ulbCovered.isEmpty() || citizenAppDownloads.isEmpty() || revenueCollected.isEmpty()
+		return ulbCovered.isEmpty()  || revenueCollected.isEmpty()
 				|| servicesApplied.isEmpty() || noOfCitizensResgistered.isEmpty();
 
 	}
