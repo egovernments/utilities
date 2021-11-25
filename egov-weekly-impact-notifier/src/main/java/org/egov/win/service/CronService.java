@@ -296,7 +296,8 @@ public class CronService {
 			Map<String, Object> servicesAppliedPerWeek = new HashMap<>();
 			ulbCoveredPerWeek.put("w" + week + "wsulbc", record.get("ulbsCovered"));
 			revenueCollectedPerWeek.put("w" + week + "wsrevcoll", record.get("revenueCollected"));
-			servicesAppliedPerWeek.put("w" + week + "wsserapp", record.get("servicesApplied"));
+			Integer totalServices = (int) record.get("servicesApplied");
+			servicesAppliedPerWeek.put("w" + week + "wsserapp", (totalServices / 1000 + "." + totalServices % 1000));
 			ulbCovered.add(ulbCoveredPerWeek);
 			revenueCollected.add(revenueCollectedPerWeek);
 			servicesApplied.add(servicesAppliedPerWeek);
