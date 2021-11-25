@@ -1,6 +1,7 @@
 package org.egov.win.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -126,8 +127,10 @@ public class CronService {
 					ulbCoveredPerWeek.put("w" + week + "ulbc", record.get("ulbcovered")); //ws not added because we need a union logic.
 					revenueCollectedPerWeek.put("w" + week + "revcoll", 
 							(new BigDecimal(record.get("revenuecollected").toString()).add(new BigDecimal(((Map) (map.get(prefix + week))).get("revenueCollected").toString()))));
-					servicesAppliedPerWeek.put("w" + week + "serapp", 
-							(new BigDecimal(record.get("servicesapplied").toString()).add(new BigDecimal(((Map) (map.get(prefix + week))).get("servicesApplied").toString()))));
+					
+					BigDecimal totalServices = (new BigDecimal(record.get("servicesapplied").toString()).add(new BigDecimal(((Map) (map.get(prefix + week))).get("servicesApplied").toString())));
+					servicesAppliedPerWeek.put("w" + week + "serapp",
+							totalServices.divide(BigDecimal.valueOf(100000.0), 3, RoundingMode.CEILING));
 					noOfCitizensResgisteredPerWeek.put("w" + week + "citreg", record.get("noofusersregistered"));
 					wsIndex++;
 				}
@@ -296,8 +299,9 @@ public class CronService {
 			Map<String, Object> servicesAppliedPerWeek = new HashMap<>();
 			ulbCoveredPerWeek.put("w" + week + "wsulbc", record.get("ulbsCovered"));
 			revenueCollectedPerWeek.put("w" + week + "wsrevcoll", record.get("revenueCollected"));
-			Integer totalServices = (int) record.get("servicesApplied");
-			servicesAppliedPerWeek.put("w" + week + "wsserapp", (totalServices / 1000 + "." + totalServices % 1000));
+			BigDecimal totalServices = new BigDecimal( record.get("servicesApplied").toString());
+			servicesAppliedPerWeek.put("w" + week + "wsserapp",
+					totalServices.divide(BigDecimal.valueOf(1000.0), 3, RoundingMode.CEILING));
 			ulbCovered.add(ulbCoveredPerWeek);
 			revenueCollected.add(revenueCollectedPerWeek);
 			servicesApplied.add(servicesAppliedPerWeek);
