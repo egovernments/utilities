@@ -74,6 +74,7 @@ public class EmailService {
 		fillData(pgr.getChannelBreakup().getMobileApp(), context);
 		fillData(pgr.getChannelBreakup().getWebApp(), context);
 		fillData(pgr.getChannelBreakup().getWhatsapp(), context);
+		fillData(pgr.getChannelBreakup().getRbbot(), context);
 	}
 
 	private void enrichPTData(PT pt, VelocityContext context) {

@@ -25,5 +25,7 @@ public class PGRChannelBreakup {
 	private List<Map<String, Object>> webApp; //unit - %
 	
 	private List<Map<String,Object>>  whatsapp;
+	
+	private List<Map<String,Object>>  rbbot;
 
 }
