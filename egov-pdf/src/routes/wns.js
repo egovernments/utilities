@@ -414,7 +414,7 @@ router.post(
             return renderError(res, "Failed to query details of water and sewerage connection");
           }
   
-          try{
+         try{
             var inputData = {searchCriteria :{locality: locality, tenantId: tenantId, propertyId: propertyIdSet}};
 
             waterBills = await search_bill_genie_water_bills(
