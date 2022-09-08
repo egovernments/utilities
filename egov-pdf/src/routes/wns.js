@@ -414,7 +414,7 @@ router.post(
             return renderError(res, "Failed to query details of water and sewerage connection");
           }
   
-          try{
+         try{
             var inputData = {searchCriteria :{locality: locality, tenantId: tenantId, propertyId: propertyIdSet}};
 
             waterBills = await search_bill_genie_water_bills(
@@ -438,7 +438,8 @@ router.post(
                   consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
-                  consolidatedResult.Bill.push(waterBill);
+                  if(waterBill.status ==='ACTIVE')
+                    consolidatedResult.Bill.push(waterBill);
                 }
               }
             }
@@ -452,7 +453,8 @@ router.post(
                   consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
-                  consolidatedResult.Bill.push(sewerageBill);
+                  if(sewerageBill.status ==='ACTIVE')
+                    consolidatedResult.Bill.push(sewerageBill);
                 }
               }
             }
@@ -511,7 +513,8 @@ router.post(
                   consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
-                  consolidatedResult.Bill.push(waterBill);
+                  if(waterBill.status ==='ACTIVE')
+                    consolidatedResult.Bill.push(waterBill);
                 }
               }
             }
@@ -566,7 +569,8 @@ router.post(
                   consolidatedResult.Bill.push(billresponse.data.Bill[0]);
                 }
                 else{
-                  consolidatedResult.Bill.push(sewerageBill);
+                  if(sewerageBill.status ==='ACTIVE')
+                    consolidatedResult.Bill.push(sewerageBill);
                 }
               }
             }
@@ -587,6 +591,7 @@ router.post(
           var pdfResponse;
           var pdfkey = config.pdf.wns_bill;
           try {
+            consolidatedResult.Bill = consolidatedResult.Bill.filter(function(e){return e});
             var billArray = { Bill: consolidatedResult.Bill };
             pdfResponse = await create_pdf(
               tenantId,
