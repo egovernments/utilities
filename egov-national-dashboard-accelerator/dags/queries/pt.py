@@ -153,6 +153,91 @@ pt_total_applications = {'path': 'property-services/_search',
 """
                          }
 
+def extract_pt_no_of_properties_paid(metrics, region_bucket):
+    metrics['noOfPropertiesPaidToday'] = region_bucket.get('noOfPropertiesPaidToday').get('value')  if region_bucket.get('noOfPropertiesPaidToday')  else 0
+    return metrics
+
+pt_no_of_properties_paid = {'path': 'dss-collection_v2/_search',
+                         'name': 'pt_no_of_properties_paid',
+                         'lambda': extract_pt_no_of_properties_paid,
+                         'query':
+                             """
+{{
+            "size": 0,
+              "query": {{
+                  "bool": {{
+                    "must_not": [
+                      {{
+                        "term": {{
+                          "dataObject.tenantId.keyword": "pb.testing"
+                        }}
+                      }},
+                      {{
+                        "terms": {{
+                          "dataObject.paymentDetails.bill.status.keyword": [
+                            "Cancelled"
+                          ]
+                        }}
+                      }}
+                    ],
+                    "must" : [
+                              {{
+                         "range":{{
+                              "dataObject.paymentDetails.receiptDate": {{
+                             "gte": {0},
+                              "lte": {1},
+                              "format": "epoch_millis"
+                             }}
+                      }}
+                      }},
+                      {{
+                    "term": {{
+                      "dataObject.paymentDetails.businessService.keyword": {{
+                        "value": "PT"
+                      }}
+                    }}
+                  }}
+                      ]
+                  }}
+                }},
+               "aggs": {{
+                    "ward": {{
+                      "terms": {{
+                        "field": "domainObject.ward.name.keyword",
+                        "size":10000
+                      }},
+                      "aggs": {{
+                          "ulb": {{
+                            "terms": {{
+                              "field": "domainObject.tenantId.keyword",
+                              "size":10000
+                            }},
+                            "aggs": {{
+                            "region": {{
+                              "terms": {{
+                                "field": "dataObject.tenantData.city.districtName.keyword",
+                                "size":10000
+                              }},
+          
+                            "aggs": {{
+                              "noOfPropertiesPaidToday": {{
+                                "value_count": {{
+                                  "field": "dataObject.paymentDetails.businessService.keyword"
+                                }}
+                              }}
+                            }}
+              }}
+            }}
+          }}
+          }}
+          }}
+          }}
+          }}
+
+
+
+"""
+                         }
 
 def extract_pt_collection_transactions_by_usage(metrics, region_bucket):
     groupby_transactions = []
@@ -915,7 +1000,8 @@ pt_properties_assessments = {'path': 'property-assessments/_search',
 
 pt_queries = [pt_closed_applications, pt_total_applications,
               pt_collection_transactions_by_usage, pt_collection_taxes, pt_collection_cess,
-              pt_assessed_properties,pt_properties_registered_by_year,pt_properties_assessments  ]
+              pt_assessed_properties,pt_properties_registered_by_year,pt_properties_assessments, 
+              pt_no_of_properties_paid ]
 
 
 #the default payload for PT
@@ -931,6 +1017,7 @@ def empty_pt_payload(region, ulb, ward, date):
             "assessments": 0,
             "todaysTotalApplications": 0,
             "todaysClosedApplications" : 0,
+            "noOfPropertiesPaidToday": 0,
             "propertiesRegistered": [
                 {
                     "groupBy": "financialYear",
