@@ -480,26 +480,26 @@ load_common = PythonOperator(
     op_kwargs={ 'module' : 'COMMON'},
     dag=dag)
 
-# extract_ws_digit = PythonOperator(
-#     task_id='elastic_search_extract_ws_digit',
-#     python_callable=dump_kibana,
-#     provide_context=True,
-#     do_xcom_push=True,
-#     op_kwargs={ 'module' : 'WS_DIGIT'},
-#     dag=dag)
+extract_ws_digit = PythonOperator(
+    task_id='elastic_search_extract_ws_digit',
+    python_callable=dump_kibana,
+    provide_context=True,
+    do_xcom_push=True,
+    op_kwargs={ 'module' : 'WS_DIGIT'},
+    dag=dag)
 
-# transform_ws_digit = PythonOperator(
-#     task_id='nudb_transform_ws_digit',
-#     python_callable=transform,
-#     provide_context=True,
-#     dag=dag)
+transform_ws_digit = PythonOperator(
+    task_id='nudb_transform_ws_digit',
+    python_callable=transform,
+    provide_context=True,
+    dag=dag)
 
-# load_ws_digit = PythonOperator(
-#     task_id='nudb_ingest_load_ws_digit',
-#     python_callable=load,
-#     provide_context=True,
-#     op_kwargs={ 'module' : 'WS_DIGIT'},
-#     dag=dag)
+load_ws_digit = PythonOperator(
+    task_id='nudb_ingest_load_ws_digit',
+    python_callable=load,
+    provide_context=True,
+    op_kwargs={ 'module' : 'WS_DIGIT'},
+    dag=dag)
 
 # extract_obps = PythonOperator(
 #     task_id='elastic_search_extract_obps',
@@ -531,5 +531,5 @@ extract_pt >> transform_pt >> load_pt
 extract_firenoc >> transform_firenoc >> load_firenoc
 extract_mcollect >> transform_mcollect >> load_mcollect
 extract_common >> transform_common >> load_common
-#extract_ws_digit >> transform_ws_digit >> load_ws_digit
+extract_ws_digit >> transform_ws_digit >> load_ws_digit
 #extract_obps >> transform_obps >> load_obps
