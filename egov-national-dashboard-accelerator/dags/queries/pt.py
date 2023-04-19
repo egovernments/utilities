@@ -997,117 +997,11 @@ pt_properties_assessments = {'path': 'property-assessments/_search',
                              }
 
 
-def extract_pt_todays_applications_within_Sla(metrics, region_bucket):
-    todaysClosedApplicationsWithinSLA_buckets = region_bucket.get('todaysClosedApplicationsWithinSLA')
-    for todaysClosedApplicationsWithinSLA_bucket in todaysClosedApplicationsWithinSLA_buckets:
-      city = todaysClosedApplicationsWithinSLA_bucket.get('key')
-      metrics['todaysClosedApplicationsWithinSLA'] = todaysClosedApplicationsWithinSLA_bucket.get('tenant_count').get('value')  if todaysClosedApplicationsWithinSLA_bucket.get('tenant_count').get('value')  else 0
-    return metrics
-
-pt_todays_applications_within_Sla = {'path': 'property-application/_search',
-                         'name': 'pt_todays_applications_within_Sla',
-                         'lambda': extract_pt_todays_applications_within_Sla,
-                         'query': 
-                         """
-            
-        {{
-          "size": 0, 
-          "query": {{
-            "bool": {{
-              "must_not": [
-                {{
-                  "term": {{
-                    "Data.tenantId.keyword": "pb.testing"
-                  }}
-                }}
-              ],
-              "must": [
-                {{
-                  "range": {{
-                    "Data.@timestamp": {{
-                      "gte": {0},
-                      "lte": {1},
-                      "format": "epoch_millis"
-                    }}
-                  }}
-                }}
-              ]
-            }}
-          }},
-          "aggs": {{
-            "ward": {{
-              "terms": {{
-                "field": "Data.ward.name.keyword",
-                "size": 10000
-              }},
-              "aggs": {{
-                "ulb": {{
-                  "terms": {{
-                    "field": "Data.tenantId.keyword",
-                    "size": 10000
-                  }},
-                  "aggs": {{
-                    "region": {{
-                      "terms": {{
-                        "field": "Data.tenantData.city.districtName.keyword",
-                        "size": 10000
-                      }},
-                      "aggs": {{
-                        "todaysClosedApplicationsWithinSLA": {{
-                          "filter": {{
-                            "bool": {{
-                              "must": [
-                                {{
-                                  "terms": {{
-                                    "Data.history.state.state.keyword": [
-                                      "APPROVED",
-                                      "REJECTED"
-                                    ]
-                                  }}
-                                }},
-                                {{
-                                  "script": {{
-                                    "script": {{
-                                      "source": "doc['Data.auditDetails.lastModifiedTime'].date.millis - doc['Data.auditDetails.createdTime'].date.millis < doc['Data.businessserviceSla'].date.millis",
-                                      "lang": "painless"
-                                    }}
-                                  }}
-                                }}
-                              ]
-                            }}
-                          }},
-                          "aggs": {{
-                            "count": {{
-                              "terms": {{
-                                "field": "Data.tenantId.keyword"
-                              }},
-                              "aggs": {{
-                                "tenant_count": {{
-                                  "value_count": {{
-                                    "field": "Data.tenantId.keyword"
-                                  }}
-                                }}
-                              }}
-                            }}
-                          }}
-                        }}
-                      }}
-                    }}
-                  }}
-                }}
-              }}
-            }}
-          }}
-        }}
-
-
-"""
-                         }
 
 pt_queries = [pt_closed_applications, pt_total_applications,
               pt_collection_transactions_by_usage, pt_collection_taxes, pt_collection_cess,
               pt_assessed_properties,pt_properties_registered_by_year,pt_properties_assessments, 
-              pt_no_of_properties_paid, pt_todays_applications_within_Sla ]
+              pt_no_of_properties_paid ]
 
 
 #the default payload for PT
@@ -1124,7 +1018,6 @@ def empty_pt_payload(region, ulb, ward, date):
             "todaysTotalApplications": 0,
             "todaysClosedApplications" : 0,
             "noOfPropertiesPaidToday": 0,
-            "todaysApplicationsWithinSLA" : 0,
             "propertiesRegistered": [
                 {
                     "groupBy": "financialYear",
