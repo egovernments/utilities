@@ -1077,11 +1077,6 @@ pt_todays_applications_within_Sla = {'path': 'property-application/_search',
                             }}
                           }},
                           "aggs": {{
-                            "count": {{
-                              "terms": {{
-                                "field": "Data.tenantId.keyword"
-                              }},
-                              "aggs": {{
                                 "tenant_count": {{
                                   "value_count": {{
                                     "field": "Data.tenantId.keyword"
@@ -1097,8 +1092,7 @@ pt_todays_applications_within_Sla = {'path': 'property-application/_search',
                 }}
               }}
             }}
-          }}
-        }}
+
 
 
 """
