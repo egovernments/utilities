@@ -999,11 +999,7 @@ pt_properties_assessments = {'path': 'property-assessments/_search',
 
 def extract_pt_todays_applications_within_Sla(metrics, region_bucket):
     todaysClosedApplicationsWithinSLA_buckets = region_bucket.get('todaysClosedApplicationsWithinSLA')
-    logging.info(region_bucket)
-    logging.info(todaysClosedApplicationsWithinSLA_buckets)
-    logging.info(todaysClosedApplicationsWithinSLA_buckets.get('Count'))
-    logging.info(todaysClosedApplicationsWithinSLA_buckets.get('Count').get('value'))
-    metrics['todaysClosedApplicationsWithinSLA'] = todaysClosedApplicationsWithinSLA_buckets.get('Count').get('value')  if todaysClosedApplicationsWithinSLA_bucket.get('Count')  else 0
+    metrics['todaysClosedApplicationsWithinSLA'] = todaysClosedApplicationsWithinSLA_buckets.get('Count').get('value')  if todaysClosedApplicationsWithinSLA_buckets.get('Count')  else 0
     return metrics
 
 pt_todays_applications_within_Sla = {'path': 'property-application/_search',
