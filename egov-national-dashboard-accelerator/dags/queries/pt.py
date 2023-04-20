@@ -1000,7 +1000,7 @@ pt_properties_assessments = {'path': 'property-assessments/_search',
 def extract_pt_todays_applications_within_Sla(metrics, region_bucket):
     todaysClosedApplicationsWithinSLA_buckets = region_bucket.get('todaysClosedApplicationsWithinSLA')
     for todaysClosedApplicationsWithinSLA_bucket in todaysClosedApplicationsWithinSLA_buckets:
-      city = todaysClosedApplicationsWithinSLA_bucket.get('key')
+      # city = todaysClosedApplicationsWithinSLA_bucket.get('key')
       metrics['todaysClosedApplicationsWithinSLA'] = todaysClosedApplicationsWithinSLA_bucket.get('tenant_count').get('value')  if todaysClosedApplicationsWithinSLA_bucket.get('tenant_count').get('value')  else 0
     return metrics
 
@@ -1077,12 +1077,11 @@ pt_todays_applications_within_Sla = {'path': 'property-application/_search',
                             }}
                           }},
                           "aggs": {{
-                                "tenant_count": {{
-                                  "value_count": {{
-                                    "field": "Data.tenantId.keyword"
-                                  }}
-                                }}
-                              }}
+                              "tenant_count": {{
+                                 "value_count": {{
+                                   "field": "Data.tenantId.keyword"
+                                 }}
+                               }}
                             }}
                           }}
                         }}
@@ -1092,6 +1091,7 @@ pt_todays_applications_within_Sla = {'path': 'property-application/_search',
                 }}
               }}
             }}
+          }}
 
 
 
