@@ -1096,10 +1096,107 @@ pt_todays_applications_within_Sla = {'path': 'property-application/_search',
 """
                          }
 
+
+def extract_pt_todays_moved_application(metrics, region_bucket):
+    groupby_status = []
+    todays_moved_application = []
+
+    if region_bucket.get('status'):
+        status_buckets = region_bucket.get('status').get('buckets')
+        for status_bucket in status_buckets:
+            status = status_bucket.get('key')
+            value = status_bucket.get('todaysmovedapplication').get('value') if status_bucket.get('todaysmovedapplication').get('value') else 0
+            groupby_status.append({ 'name' : status.upper(), 'value' : value})
+
+    todays_moved_application.append({ 'groupBy': 'applicationStatus', 'buckets' : groupby_status})
+    metrics['todaysMovedApplications'] = todays_moved_application
+
+    return metrics
+
+pt_todays_moved_application= {'path':'property-application/_search',
+                          'name': 'pt_todays_moved_application',
+                          'lambda': extract_pt_todays_moved_application,
+                          'query':
+                              """
+{{
+  "size": 0,
+  "query": {{
+    "bool": {{
+      "must_not": [
+        {{
+          "term": {{
+            "Data.tenantId.keyword": "pb.testing"
+          }}
+        }}
+      ],
+      "must": [
+        {{
+          "range": {{
+            "Data.history.auditDetails.lastModifiedTime": {{
+              "gte": {0},
+              "lte": {1},
+              "format": "epoch_millis"
+            }}
+          }}
+        }}
+      ]
+    }}
+  }},
+  "aggs": {{
+    "ward": {{
+      "terms": {{
+        "field": "Data.ward.name.keyword",
+        "size": 10000
+      }},
+      "aggs": {{
+        "ulb": {{
+          "terms": {{
+            "field": "Data.tenantId.keyword",
+            "size": 10000
+          }},
+          "aggs": {{
+            "region": {{
+              "terms": {{
+                "field": "Data.tenantData.city.districtName.keyword",
+                "size": 10000
+              }},
+              "aggs": {{
+                "status": {{
+                  "terms": {{
+                    "field": "Data.history.state.state.keyword"
+                  }},
+                  "aggs": {{
+                    "todaysmovedapplication": {{
+                      "value_count": {{
+                        "script": {{
+                          "lang": "painless",
+                           "source": "params._source.Data.history.sort((o1,o2)->(int)o2.auditDetails.lastModifiedTime-(int)o1.auditDetails.lastModifiedTime);for (int i = 0; i < params['_source']['Data']['history'].length; ++i) {{if(params['_source']['Data']['history'][i]['auditDetails']['lastModifiedTime']  >= {0} && params['_source']['Data']['history'][i]['auditDetails']['lastModifiedTime'] <= {1}){{ return (params['_source']['Data']['history'][i]['state']['state'] ); }}"
+                        }}
+                      }}
+                    }}
+                  }}
+                }}
+              }}
+            }}
+          }}
+        }}
+      }}
+    }}
+  }}
+}}
+
+
+
+"""
+                          }
+
+
+
+
 pt_queries = [pt_closed_applications, pt_total_applications,
               pt_collection_transactions_by_usage, pt_collection_taxes, pt_collection_cess,
               pt_assessed_properties,pt_properties_registered_by_year,pt_properties_assessments, 
-              pt_no_of_properties_paid, pt_todays_applications_within_Sla ]
+              pt_no_of_properties_paid, pt_todays_applications_within_Sla ,pt_todays_moved_application]
 
 
 #the default payload for PT
@@ -1117,6 +1214,15 @@ def empty_pt_payload(region, ulb, ward, date):
             "todaysClosedApplications" : 0,
             "noOfPropertiesPaidToday": 0,
             "todaysApplicationsWithinSLA" : 0,
+            "todaysMovedApplications":[
+        
+                     {
+                        "groupBy": "applicationStatus",
+                        "buckets": [
+        
+                                    ]
+                     }
+            ],
             "propertiesRegistered": [
                 {
                     "groupBy": "financialYear",
