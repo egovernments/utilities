@@ -1170,7 +1170,7 @@ pt_todays_moved_application= {'path':'property-application/_search',
                       "value_count": {{
                         "script": {{
                           "lang": "painless",
-                           "source": "params._source.Data.history.sort((o1,o2)->(int)o2.auditDetails.lastModifiedTime-(int)o1.auditDetails.lastModifiedTime);for (int i = 0; i < params['_source']['Data']['history'].length; ++i) {{if(params['_source']['Data']['history'][i]['auditDetails']['lastModifiedTime']  >= {0} && params['_source']['Data']['history'][i]['auditDetails']['lastModifiedTime'] <= {1}){{ return (params['_source']['Data']['history'][i]['state']['state'] ); }}"
+                           "source": "params._source.Data.history.sort((o1,o2)->(int)o2.auditDetails.lastModifiedTime-(int)o1.auditDetails.lastModifiedTime);for (int i = 0; i < params['_source']['Data']['history'].length; ++i) {{if(params['_source']['Data']['history'][i]['auditDetails']['lastModifiedTime']  >= {0}L && params['_source']['Data']['history'][i]['auditDetails']['lastModifiedTime'] <= {1}L){{ return (params['_source']['Data']['history'][i]['state']['state'] ); }}}}"
                         }}
                       }}
                     }}
