@@ -38,8 +38,8 @@ cf_total_no_of_citizen_responses_by_channel = {'path': 'citizen-feedback/_search
         {{
           "range": {{
             "Data.@timestamp": {{
-              "gte": {0},
-              "lte": {1}},
+              "gte": 1571798342179,
+              "lte": 1791798342179,
               "format": "epoch_millis"
             }}
           }}
@@ -72,7 +72,21 @@ cf_total_no_of_citizen_responses_by_channel = {'path': 'citizen-feedback/_search
                 "field": "Data.tenantData.city.districtName.keyword",
                 "size": 10000
               }},
+                "aggs": {{
+                "serviceModule":{{
+                  "terms": {{
+                    "field": "Data.serviceModule.keyword",
+                    "size": 10
+                  }}
+             , 
               "aggs": {{
+                "serviceType":{{
+                  "terms": {{
+                    "field": "Data.serviceType.keyword",
+                    "size": 10
+                  }}
+                
+              ,"aggs": {{
                 "channel": {{
                   "terms": {{
                     "field": "Data.channel.keyword",
@@ -87,13 +101,16 @@ cf_total_no_of_citizen_responses_by_channel = {'path': 'citizen-feedback/_search
                   }}
                 }}
               }}
+                }}
+              }}
+            }}
             }}
           }}
         }}
       }}
     }}
   }}
-}}
+}}}}
 
 """
                           }
