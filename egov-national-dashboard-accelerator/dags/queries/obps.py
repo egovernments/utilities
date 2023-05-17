@@ -1632,7 +1632,7 @@ obps_queries = [obps_ocIssued, obps_permitsIssued_by_riskType_occupancyType_subO
 def empty_obps_payload(region, ulb, ward, date):
     return {
         "date": date,
-        "module": "MCOLLECT",
+        "module": "OBPS",
         "ward": ward,
         "ulb": ulb,
         "region": region,
