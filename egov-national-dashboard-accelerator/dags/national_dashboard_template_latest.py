@@ -22,6 +22,7 @@ from queries.firenoc import *
 from queries.mcollect import *
 from queries.obps import *
 from queries.common import *
+from queries.cf import *
 from utils.utils import log
 from pytz import timezone
 from airflow.models import Variable
@@ -48,7 +49,8 @@ module_map = {
     'FIRENOC' : (firenoc_queries, empty_firenoc_payload),
     'MCOLLECT' : (mcollect_queries, empty_mcollect_payload),
     'OBPS' : (obps_queries, empty_obps_payload),
-    'COMMON' : (common_queries,empty_common_payload)
+    'COMMON' : (common_queries,empty_common_payload),
+    'cf': (cf_queries,empty_cf_payload)
 }
 
 
@@ -522,6 +524,27 @@ load_obps = PythonOperator(
     op_kwargs={ 'module' : 'OBPS'},
     dag=dag)
 
+exract_cf= PythonOperator(
+     task_id= 'elastic_search_extract_cf',
+      python_callable=dump_kibana,
+    provide_context=True,
+    do_xcom_push=True,
+    op_kwargs={ 'module' : 'cf'},
+    dag=dag
+)
+
+transform_cf = PythonOperator(
+    task_id='nudb_transform_cf',
+    python_callable=transform,
+    provide_context=True,
+    dag=dag)
+load_cf = PythonOperator(
+    task_id='nudb_ingest_load_cf',
+    python_callable=load,
+    provide_context=True,
+    op_kwargs={ 'module' : 'cf'},
+    dag=dag)
+
 
 
 extract_tl >> transform_tl >> load_tl
@@ -533,3 +556,4 @@ extract_mcollect >> transform_mcollect >> load_mcollect
 extract_common >> transform_common >> load_common
 extract_ws_digit >> transform_ws_digit >> load_ws_digit
 extract_obps >> transform_obps >> load_obps
+exract_cf >> transform_cf >> load_cf

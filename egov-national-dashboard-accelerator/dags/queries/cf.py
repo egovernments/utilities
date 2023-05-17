@@ -65,8 +65,8 @@ cf_total_no_of_citizen_responses_by_channel = {'path': 'citizen-feedback/_search
         {{
           "range": {{
             "Data.@timestamp": {{
-              "gte": 1571798342179,
-              "lte": 1791798342179,
+                 "gte": {0},
+              "lte": {1},
               "format": "epoch_millis"
             }}
           }}
