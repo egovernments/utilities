@@ -19,6 +19,7 @@ def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
                 for channel_bucket in channel_buckets:
                      channel=channel_bucket.get('key')
                      logging.info(channel)
+                     logging.info(channel_bucket)
                      value=channel_bucket.get('todaysNoOfCitizenResponsesForChannel').value
                      group_by_channel.append({'name':channel.upper(),'value':value})
                 todaysNoOfCitizenResponses.append({'name':"channel",value:group_by_channel})
