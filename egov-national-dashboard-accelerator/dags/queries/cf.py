@@ -30,7 +30,7 @@ def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
                 logging.info(metrics)
 
 
-          
+    return metrics
  
     # service_module_agg = region_bucket.get('serviceModule')
     # service_module_buckets = service_module_agg.get('buckets')
@@ -144,8 +144,7 @@ cf_total_no_of_citizen_responses_by_channel = {'path': 'citizen-feedback/_search
                           }
 
 def extract_average_citizen_rating(metrics, region_bucket):
-    metrics['todaysAverageCitizenRating'] = region_bucket.get('todaysAverageCitizenRating').get(
-        'value') if region_bucket.get('todaysAverageCitizenRating') else 0
+    metrics['todaysAverageCitizenRating'] = region_bucket.get('todaysAverageCitizenRating').get('value') if region_bucket.get('todaysAverageCitizenRating') else 0
     return metrics
 
 
@@ -227,8 +226,7 @@ average_citizen_rating = {'path': 'citizen-feedback/_search',
 """
                              }
 
-cf_queries = [cf_total_no_of_citizen_responses_by_channel,
-              average_citizen_rating,
+cf_queries = [cf_total_no_of_citizen_responses_by_channel
                
               ]
 
