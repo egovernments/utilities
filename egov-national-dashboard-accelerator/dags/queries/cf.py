@@ -15,7 +15,7 @@ def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
            for serviceType_bucket in serviceType_buckets:
                 serviceType=serviceType_bucket.get('key')
                 logging.info(serviceType)
-                channel_buckets=serviceType_bucket.get("serviceType_bucket").get('buckets')
+                channel_buckets=serviceType_bucket.get("channel").get('buckets')
                 for channel_bucket in channel_buckets:
                      channel=channel_bucket.get('key')
                      logging.info(channel)
