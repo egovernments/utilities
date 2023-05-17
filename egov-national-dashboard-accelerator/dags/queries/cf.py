@@ -7,7 +7,6 @@ def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
       todaysNoOfCitizenResponses=[]
       group_by_channel=[]
       serviceModule_buckets=region_bucket.get('serviceModule').get('buckets')
-
       for serviceModule_bucket in serviceModule_buckets:
            serviceModule= serviceModule_bucket.get("key")
            logging.info(serviceModule)
@@ -28,9 +27,7 @@ def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
                 metrics['todaysNoOfCitizenResponses']=todaysNoOfCitizenResponses
                 logging.info(todaysNoOfCitizenResponses)
                 logging.info(metrics)
-
-
-    return metrics
+      return metrics
  
     # service_module_agg = region_bucket.get('serviceModule')
     # service_module_buckets = service_module_agg.get('buckets')
