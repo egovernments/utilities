@@ -2,8 +2,35 @@
 import logging
 
 def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
-    #TODO nested loop for aggregation to be implemented
+      serviceModule=[]
+      serviceType=[]
+      todaysNoOfCitizenResponses=[]
+      group_by_channel=[]
+      serviceModule_buckets=region_bucket.get('serviceModule').get('buckets')
 
+      for serviceModule_bucket in serviceModule_buckets:
+           serviceModule= serviceModule_bucket.get("key")
+           logging.info(serviceModule)
+           serviceType_buckets=serviceModule_bucket.get("serviceType").get('buckets')
+           for serviceType_bucket in serviceType_buckets:
+                serviceType=serviceType_bucket.get('key')
+                logging.info(serviceType)
+                channel_buckets=serviceType_bucket.get("serviceType_bucket").get('buckets')
+                for channel_bucket in channel_buckets:
+                     channel=channel_bucket.get('key')
+                     logging.info(channel)
+                     value=channel_bucket.get('todaysNoOfCitizenResponsesForChannel').value
+                     group_by_channel.append({'name':channel.upper(),'value':value})
+                todaysNoOfCitizenResponses.append({'name':"channel",value:group_by_channel})
+                metrics['serviceModule']=serviceModule
+                metrics['serviceType']=serviceType
+                metrics['todaysNoOfCitizenResponses']=todaysNoOfCitizenResponses
+                logging.info(todaysNoOfCitizenResponses)
+                logging.info(metrics)
+
+
+          
+ 
     # service_module_agg = region_bucket.get('serviceModule')
     # service_module_buckets = service_module_agg.get('buckets')
 
@@ -201,7 +228,7 @@ average_citizen_rating = {'path': 'citizen-feedback/_search',
 
 cf_queries = [cf_total_no_of_citizen_responses_by_channel,
               average_citizen_rating,
-               serviceModule, serviceType
+               
               ]
 
 #the default payload for CF
@@ -214,22 +241,20 @@ def empty_cf_payload(region, ulb, ward, date ):
         "region": region,
         "state": "Punjab",
         "metrics": {
-            "serviceModule": "",
+           "todaysAverageCitizenRating": 0,
+           "serviceModule": "",
             "serviceType": "",
             "todaysNoOfCitizenResponses": [
-              "groupBy": "channel",
-               "buckets": [
-                        {
-                            "name": "",
-                            "value": 0
-                        },
-                        {
-                            "name": "2019-20",
-                            "value": 0
-                        }
+                {
+                     "groupBy": "channel",
+                     "buckets": [
+                      
                         ]
-            ],
-            "todaysAverageCitizenRating": 0
-        }
-    }
+                }
+                      
+                 ]
+         }
+
+       }
+    
 
