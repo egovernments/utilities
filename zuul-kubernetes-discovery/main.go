@@ -146,7 +146,13 @@ func main() {
 	}
 
 	clientset := getKubeConnection()
-	s := listAllServices(clientset, n)
-	r := getZuulRoutes(s)
-	writeTemplate(r)
+
+	namespaces := strings.Split(n, ",")
+	routes := []Route{}
+	for _, namespace := range namespaces {
+		s := listAllServices(clientset, namespace)
+		r := getZuulRoutes(s)
+		routes = append(routes, *r...)
+	}
+	writeTemplate(&routes)
 }
