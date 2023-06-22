@@ -18,8 +18,9 @@ def extract_cf_total_no_of_citizen_responses_by_channel(metrics, region_bucket):
                      value=channel_bucket.get('todaysNoOfCitizenResponsesForChannel').get('value')
                      group_by_channel.append({'name':channel.upper(),'value':value})
                 group_by_serviceType.append({'serviceType':serviceType.upper(),'value':group_by_channel})
-           group_by_service_module.append({'serviceModule':serviceModule.upper(),'value':group_by_serviceType})
-      todaysNoOfCitizenResponses.append({'name':'serviceModule','value':group_by_service_module})
+         #  group_by_service_module.append({'serviceModule':serviceModule.upper(),'value':group_by_serviceType})
+           
+      todaysNoOfCitizenResponses.append({'name':serviceModule.upper(),'value':group_by_serviceType})
       metrics['todaysNoOfCitizenResponses']=todaysNoOfCitizenResponses
       return metrics
  
