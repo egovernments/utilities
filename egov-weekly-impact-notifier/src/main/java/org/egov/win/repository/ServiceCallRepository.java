@@ -37,7 +37,7 @@ public class ServiceCallRepository {
 		Object response = null;
 		try {
 			log.info("URI: "+ uri);
-			log.info("Request: "+mapper.writeValueAsString(request));
+			log.info("Request: "+ request);
 			response = restTemplate.postForObject(uri.toString(), request, JsonNode.class);
 		} catch (HttpClientErrorException e) {
 			log.error("External Service threw an Exception: ", e);
